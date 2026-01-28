@@ -1,7 +1,7 @@
 {
-  "name": "sap",
-  "description": "Security Audit Plugin - Comprehensive 15-category security audit for web applications",
-  "version": "1.0.0",
+  "name": "bridge",
+  "description": "Security Audit Plugin - Evidence-based security scanning with anti-hallucination rules. 12 categories, context-aware analysis, zero false positives.",
+  "version": "2.0.0",
   "author": {
     "name": "Ian Muench"
   },

@@ -1,279 +1,382 @@
 ---
 name: security
-description: Comprehensive 21-category security audit for web applications and cloud infrastructure. Use when performing security reviews, vulnerability assessments, or auditing code for security issues.
+description: Comprehensive security audit with evidence-based findings. Combines deep pattern knowledge with contextual reasoning to eliminate false positives.
 ---
 
 # Security Audit
 
 You are a security expert performing a comprehensive security audit.
 
-## CRITICAL INSTRUCTIONS
+---
 
-1. **READ-ONLY MODE**: DO NOT edit, write, or modify any files during the audit. Only use `Read`, `Grep`, and `Glob` tools to examine the codebase.
+## ANTI-HALLUCINATION RULES (CRITICAL)
 
-2. **TRACK PROGRESS**: Use `TodoWrite` to track your progress through all 21 security categories. Add all categories as pending at the start.
+These rules prevent false claims. Violating them invalidates your audit.
 
-3. **SEQUENTIAL EXECUTION**: Check ONE category at a time, in order. Do not parallelize or batch checks.
+### Rule 1: No Findings Without Evidence
+- You MUST call Read or Grep before claiming ANY finding
+- You MUST quote the EXACT code snippet from the file
+- You MUST include file path AND line number from your Read output
+- If you cannot find evidence in the actual file, it is NOT a finding
 
-4. **REPORT AS YOU GO**: After each category, immediately report what you found (issues or passes).
+### Rule 2: No Summary Claims
+- NEVER say "I found X issues" without listing each one with evidence
+- NEVER say "there may be issues with..." without showing the code
+- Each finding must be individually proven with quoted code
 
-5. **ASK BEFORE FIXING**: At the end, ask the user which issues they want fixed. DO NOT make any code changes until explicitly requested.
+### Rule 3: Verify Your Claims
+- After every Read, verify the code matches what you are claiming
+- If the code does not show the vulnerability, retract the claim
+- Quote the vulnerable line directly with its line number
+
+### Rule 4: Context Matters
+- Read surrounding code before deciding if something is vulnerable
+- A pattern in a test file is NOT the same as production code
+- A pattern in a comment or string literal is NOT vulnerable code
+- Check if there are mitigations nearby (validation, sanitization)
 
 ---
 
-## Execution Flow
+## EXECUTION FLOW
 
-For EACH category (1-21), follow this exact pattern:
+For EACH security category:
 
-1. Mark the category as `in_progress` in TodoWrite
-2. Print: `## Checking [Category Name]...`
-3. Search relevant files using Grep/Glob/Read
-4. Analyze findings against the criteria
-5. Print findings immediately:
-   - Issues found (with file:line locations and severity)
-   - OR "No issues found"
-6. Mark the category as `completed` in TodoWrite
-7. Proceed to the next category
+1. **Search** - Use Grep/Glob to find relevant patterns
+2. **Read** - Use Read to see the actual code in context
+3. **Analyze** - Apply the context rules below to determine if it is real
+4. **Report** - Only report with quoted evidence
+
+Example finding format:
+```
+## Finding: SQL Injection in User Query
+- **File:** src/db/users.js:47
+- **Code:** [quote the exact line]
+- **Why it is vulnerable:** User input concatenated into SQL query
+- **Fix:** Use parameterized query with placeholders
+```
 
 ---
 
-## Security Categories
+## CATEGORY 1: SQL Injection
 
-### 1. Authentication & Sessions
-- Password requirements (12+ chars, complexity, HIBP breach checking)
-- Session management (JWT tokens, secure cookies, expiration)
-- API key security (hashed storage, timing-safe comparison, rotation)
-- Email verification before account activation
-- Hardcoded credentials in code
+### What to Search For
+- String concatenation in SQL queries
+- Template literal interpolation in queries
+- Format string interpolation in queries
 
-### 2. Authorization
-- Row Level Security (RLS) on all database tables
-- Role-based access control
-- Ownership validation for data access
-- IDOR vulnerabilities (Insecure Direct Object Reference)
-- Privilege escalation paths
+### Actually Vulnerable
+- Direct string concatenation building SQL with user input
+- Template literals inserting variables directly into SQL strings
+- Python format strings with user variables in SQL
 
-### 3. Rate Limiting & Brute Force
-- Database-backed rate limiting (not in-memory)
-- Appropriate limits: auth (5-10/window), API (100+/min), public forms (10/IP/hr)
-- Progressive account lockout (5 fails: 15min, 10: 1hr, 15+: 24hr)
-- IP blocking after repeated violations
-- Fail-closed on database errors
+### NOT Vulnerable
+- Parameterized queries with placeholders ($1, ?, :name)
+- ORM methods that handle escaping (Prisma, TypeORM, Sequelize)
+- Queries in comments or documentation
+- Queries with only hardcoded values
 
-### 4. Input Validation & Injection
-- SQL injection (string concatenation in queries)
-- Command injection (shell execution with user input)
-- XSS (unescaped output, innerHTML, raw HTML rendering)
-- Schema validation (Zod or similar)
-- DOMPurify sanitization with ALLOWED_TAGS: []
+### Context Check
+1. Does user input actually flow into this query?
+2. Is there validation/sanitization before this line?
+3. Is this in test code or production code?
 
-### 5. CSRF Protection
-- Double-submit cookie pattern
-- Constant-time token comparison
-- Secure cookie attributes (__Host- prefix)
-- CSRF-exempt routes properly identified
+---
 
-### 6. Security Headers
-Check middleware/server config for:
-```
-Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-X-Frame-Options: DENY
-X-Content-Type-Options: nosniff
-X-XSS-Protection: 1; mode=block
-Referrer-Policy: strict-origin-when-cross-origin
-Content-Security-Policy: [analyze directives]
-Permissions-Policy: camera=(), microphone=(), geolocation=()
-```
+## CATEGORY 2: Cross-Site Scripting (XSS)
 
-### 7. SSRF Prevention (webhooks/external URLs)
-- Block cloud metadata (169.254.169.254)
-- Block localhost/loopback
-- Block private IPs (10.x, 172.16-31.x, 192.168.x)
-- Block Kubernetes internal domains
-- Require HTTPS in production
+### What to Search For
+- innerHTML assignments
+- React unsafe HTML rendering
+- document.write calls
+- Vue v-html directive
+- Unescaped template output
 
-### 8. Webhook Security
-- HMAC-SHA256 signatures
-- Per-client secrets (32 random bytes)
-- Timing-safe signature verification
-- Delivery tracking
+### Actually Vulnerable
+- Assigning user input directly to innerHTML
+- Rendering user content as raw HTML in React
+- Writing user data with document.write
+- Vue v-html with user-controlled content
 
-### 9. Secret Management
-- .gitignore excludes: `.env*`, `*.pem`, `*.key`, `.dev.vars`, `credentials.json`
-- No secrets in git history
-- No hardcoded API keys, tokens, passwords
-- NEXT_PUBLIC_* variables safe for client exposure
-- Secrets in platform secret managers (not code)
+### NOT Vulnerable
+- Static HTML content assignment
+- Using textContent instead of innerHTML
+- Content sanitized with DOMPurify before use
+- Admin-only or trusted source content
 
-### 10. Data Exposure
+### Context Check
+1. Where does the content come from?
+2. Is there sanitization before rendering?
+3. Is this admin-only or user-generated content?
+
+---
+
+## CATEGORY 3: Hardcoded Secrets
+
+### What to Search For
+- API keys assigned as string literals
+- Passwords in code
+- AWS access keys (AKIA prefix)
+- Stripe keys (sk_live_, sk_test_)
+- Private keys in source files
+
+### Actually Vulnerable
+- Real API keys assigned to variables
+- Real passwords hardcoded in source
+- AWS access keys embedded in code
+- Private keys stored in source files
+
+### NOT Vulnerable
+- Environment variable references (process.env.X)
+- Template placeholders
+- Example values in comments
+- Test/development placeholder values
+- .env.example with dummy values
+- Security scanner pattern definitions
+
+### Context Check
+1. Is this a real secret or a placeholder?
+2. Is it in a test/example file?
+3. Is it documentation or actual code?
+
+---
+
+## CATEGORY 4: Authentication Issues
+
+### What to Search For
+- Routes without auth middleware
+- JWT signing with weak secrets
+- JWT allowing none algorithm
+- Insecure cookie settings
+- Hardcoded session secrets
+
+### Actually Vulnerable
+- Admin routes with no authentication middleware
+- JWT secrets that are short or obvious
+- Accepting none as a valid JWT algorithm
+- Cookies without secure flag in production
+- Session secrets hardcoded as simple strings
+
+### NOT Vulnerable
+- Routes with auth middleware applied
+- Public routes that should be public
+- JWT secrets loaded from environment
+- Development-only insecure settings with env checks
+
+### Context Check
+1. Is middleware applied at router level?
+2. Should this route be public?
+3. Is insecure setting guarded by environment check?
+
+---
+
+## CATEGORY 5: SSRF (Server-Side Request Forgery)
+
+### What to Search For
+- fetch/axios/request with dynamic URLs
+- User input flowing into URL parameters
+- Webhook URL handling
+- URL validation using weak methods
+
+### Actually Vulnerable
+- Fetching URLs directly from user input
+- User-controlled webhook/callback URLs
+- Validation using string includes instead of proper parsing
+
+### NOT Vulnerable
+- Hardcoded URLs
+- Environment variable base with static paths
+- Proper URL parsing with allowlist validation
+- Internal service calls without user input
+
+### Context Check
+1. Does user input flow into the URL?
+2. Is there URL validation before the request?
+3. Does validation handle IP bypass formats?
+
+---
+
+## CATEGORY 6: Supabase Security
+
+### What to Search For
+- Tables without RLS in migrations
+- Service role key in client code
+- Service role in NEXT_PUBLIC variables
+- RLS policies using just true
+
+### Actually Vulnerable
+- CREATE TABLE without matching RLS enablement
+- Service role key passed to client-side code
+- Service role key in public environment variables
+- RLS policies that allow everything
+
+### NOT Vulnerable
+- Tables with RLS enabled and real policies
+- Service role in server-only code
+- Anon key in client code (expected)
+- Intentionally public tables
+
+### Context Check
+1. Does each table have matching RLS?
+2. Do RLS policies actually restrict access?
+3. Is service role key server-side only?
+
+---
+
+## CATEGORY 7: Rate Limiting
+
+### What to Search For
+- Auth endpoints: login, signup, password reset
+- Rate limiter imports and usage
+- In-memory vs persistent rate limiting
+
+### Actually Vulnerable
+- Login endpoint with no visible rate limiting
+- Password reset without rate limiting
+- In-memory limiter in production
+
+### NOT Vulnerable
+- Endpoints with rate limit middleware
+- Infrastructure-level limiting (Cloudflare, WAF)
+- Redis-backed rate limiting
+- Non-sensitive endpoints
+
+---
+
+## CATEGORY 8: CORS Configuration
+
+### What to Search For
+- CORS middleware configuration
+- Access-Control headers
+- Origin handling with credentials
+
+### Actually Vulnerable
+- Wildcard origin combined with credentials enabled
+- Origin reflection without validation
+
+### NOT Vulnerable
+- Wildcard origin without credentials (public APIs)
+- Specific origin allowlist
+- Origin validation function
+
+---
+
+## CATEGORY 9: Cryptography
+
+### What to Search For
+- MD5/SHA1 for password hashing
+- Math.random for security tokens
+- Hardcoded encryption keys
+- Weak cipher modes
+
+### Actually Vulnerable
+- Weak hashes for password storage
+- Predictable random for security purposes
+- Encryption keys in source code
+- ECB mode or deprecated ciphers
+
+### NOT Vulnerable
+- MD5/SHA1 for checksums only
+- Secure random functions for tokens
+- bcrypt/argon2/scrypt for passwords
+- Keys from environment variables
+
+---
+
+## CATEGORY 10: Dangerous Code Patterns
+
+### What to Search For
+- Dynamic code evaluation patterns
+- Shell command execution with user input
+- Unsafe deserialization
+- Unsafe YAML loading
+
+### Actually Vulnerable
+- User input in code evaluation
+- Shell commands with concatenated user input
+- Deserializing untrusted data
+- YAML load without safe loader
+
+### NOT Vulnerable
+- Build tool configurations
+- Static commands without user input
+- Safe deserialization methods
+- Vendor/node_modules code
+
+---
+
+## CATEGORY 11: Cloud Security
+
+### What to Search For
+- Cloud credentials in code
+- Overly permissive IAM policies
+- Open security groups
+- Service account keys in repo
+
+### Actually Vulnerable
+- IAM with wildcard action AND resource
+- Security groups open to 0.0.0.0/0 on sensitive ports
+- Hardcoded cloud credentials
+- Service account JSON committed
+
+### NOT Vulnerable
+- Constrained IAM policies
+- Web ports open to public
+- Secret manager references
+
+---
+
+## CATEGORY 12: Logging and Data Exposure
+
+### What to Search For
 - Sensitive data in logs
-- Verbose error messages in production
-- Debug endpoints exposed
-- PII in API responses
+- Stack traces to clients
+- Debug mode in production
+- Verbose error responses
 
-### 11. Cryptography
-- No weak hashing (MD5, SHA1 for passwords)
-- No hardcoded encryption keys
-- Secure random number generation
-- HTTPS enforcement
+### Actually Vulnerable
+- Passwords or tokens in log statements
+- Stack traces returned in API responses
+- Debug enabled in production config
 
-### 12. Database Security
-- SECURITY DEFINER functions use `SET search_path = public`
-- Proper indexes on security columns
-- Connection pooling configured
-- Encryption at rest/in transit
-
-### 13. Bot Prevention
-- CAPTCHA/Turnstile on public forms
-- Server-side token validation
-
-### 14. Audit Logging
-- Security events logged with severity
-- Categories: auth, rate-limit, ssrf, input, access, admin
-- Retention policy (90+ days)
-
-### 15. Dangerous Code Patterns
-Check for these specific high-risk code patterns:
-
-**JavaScript/TypeScript:**
-- `eval()` - arbitrary code execution
-- `new Function()` - dynamic code evaluation
-- `child_process` shell commands - prefer execFile over exec for shell injection prevention
-- `document.write()` - XSS and performance issues
-- `.innerHTML =` - XSS without sanitization
-- `dangerouslySetInnerHTML` - React XSS risk without DOMPurify
-
-**Python:**
-- `pickle.load()` / `pickle.loads()` - arbitrary code execution via deserialization
-- `os.system()` - shell injection (prefer subprocess.run with list args)
-- `eval()` / `exec()` - arbitrary code execution
-
-**GitHub Actions (.github/workflows/*.yml):**
-- Direct use of untrusted inputs in `run:` commands:
-  - `${{ github.event.issue.title }}`
-  - `${{ github.event.issue.body }}`
-  - `${{ github.event.pull_request.title }}`
-  - `${{ github.event.pull_request.body }}`
-  - `${{ github.event.comment.body }}`
-  - `${{ github.event.commits.*.message }}`
-  - `${{ github.head_ref }}`
-- Should use `env:` variables with proper quoting instead
-
-### 16. AWS Security
-Check for AWS-specific vulnerabilities:
-
-- **IAM Policies**: Overly permissive `*` actions or `*` resources in policy files
-- **S3 Buckets**: Public access, missing `BlockPublicAccess` settings
-- **Security Groups**: Ingress rules with `0.0.0.0/0` on sensitive ports
-- **Hardcoded Credentials**: `AKIA*` access keys, secret keys in code
-- **Secrets Management**: Secrets in code vs AWS Secrets Manager/Parameter Store
-- **Lambda**: Environment variables containing secrets, overly permissive execution roles
-- **CloudFormation/Terraform**: Public resources, missing encryption settings
-
-Files to check: `*.tf`, `*.yaml`, `*.yml`, `serverless.yml`, `template.yaml`, `*.json` (CloudFormation)
-
-### 17. Google Cloud Security
-Check for GCP-specific vulnerabilities:
-
-- **IAM Bindings**: `allUsers` or `allAuthenticatedUsers` grants
-- **GCS Buckets**: Public ACLs, uniform bucket-level access disabled
-- **Service Account Keys**: `.json` key files committed to repo
-- **Firewall Rules**: Ingress `0.0.0.0/0` on sensitive ports
-- **Secrets**: Hardcoded vs Secret Manager
-- **Cloud SQL**: Public IP enabled, no SSL required
-
-Files to check: `*.tf`, `*.yaml`, `gcloud` commands in scripts, service account `*.json` files
-
-### 18. Vercel Security
-Check for Vercel-specific vulnerabilities:
-
-- **Environment Variables**: Secrets in `NEXT_PUBLIC_*` (exposed to client)
-- **vercel.json Headers**: Missing security headers configuration
-- **Preview Protection**: Sensitive previews without password protection
-- **Edge Functions**: Secrets in edge runtime (limited crypto APIs)
-- **Env Scoping**: Production secrets accessible in preview/development
-
-Files to check: `vercel.json`, `.env*`, `next.config.js`, edge function files
-
-### 19. Azure Security
-Check for Azure-specific vulnerabilities:
-
-- **RBAC**: Overly permissive role assignments, `Owner` at subscription level
-- **Storage Accounts**: Public blob access enabled, shared key access
-- **NSGs**: Inbound rules with `*` or `0.0.0.0/0` on sensitive ports
-- **Key Vault**: Secrets in code vs Key Vault references
-- **App Service**: HTTPS-only disabled, FTP enabled, managed identity not used
-- **Hardcoded Credentials**: Connection strings, SAS tokens in code
-- **ARM/Bicep Templates**: Public endpoints, missing encryption
-
-Files to check: `*.bicep`, `*.json` (ARM), `*.tf`, `appsettings*.json`, `*.config`
-
-### 20. Cloudflare Security
-Check for Cloudflare-specific vulnerabilities:
-
-- **Workers**: Secrets in code vs Workers Secrets/KV
-- **Pages**: `_headers` file missing security headers
-- **API Tokens**: Hardcoded tokens, overly permissive scopes
-- **Firewall Rules**: Bypasses, misconfigured WAF rules
-- **Access**: Sensitive routes without Cloudflare Access protection
-- **Environment Variables**: Secrets in `wrangler.toml` vs secrets
-
-Files to check: `wrangler.toml`, `_headers`, `_redirects`, worker scripts, `*.ts`/`*.js` in functions/
-
-### 21. Firebase Security
-Check for Firebase-specific vulnerabilities:
-
-- **Firestore Rules**: `allow read, write: if true` (wide open)
-- **Storage Rules**: Public read/write without auth checks
-- **Auth**: Email enumeration enabled, weak password requirements
-- **API Keys**: Firebase config exposed (check if restricted)
-- **Admin SDK**: Service account keys in repo, admin credentials in client code
-- **Cloud Functions**: Missing auth validation, CORS misconfiguration
-- **Database Rules**: `.read`/`.write` set to `true` at root
-
-Files to check: `firestore.rules`, `storage.rules`, `database.rules.json`, `firebase.json`, `**/firebase*.js`
+### NOT Vulnerable
+- Logging without sensitive data
+- Development-only verbose errors
+- Redacted logging
+- Error tracking with PII filtering
 
 ---
 
-## Final Report
+## FINAL REPORT FORMAT
 
-After completing ALL 21 categories, compile a final summary:
-
-```
+```markdown
 # Security Audit Report
 
 ## Summary
-Overall Posture: [Strong/Moderate/Weak]
-Critical: X | High: X | Medium: X | Low: X
+- **Overall Risk:** [Critical/High/Medium/Low]
+- **Findings:** X Critical, X High, X Medium, X Low
 
-## Critical Issues (P0)
-### [Issue Title]
-- Location: `file:line`
-- Vulnerability: [OWASP category]
-- Risk: [Impact if exploited]
-- Suggested Fix: [Description - DO NOT implement yet]
+## Critical Findings
 
-## High Priority (P1)
-...
-
-## Medium Priority (P2)
-...
-
-## Low Priority (P3)
-...
+### 1. [Title]
+- **File:** path/to/file.js:47
+- **Evidence:** [exact code from file]
+- **Risk:** [What could happen]
+- **Fix:** [Specific remediation]
 
 ## Passed Checks
-- [List of security measures verified as implemented correctly]
+- [x] No SQL injection found
+- [x] Proper password hashing
+- [x] RLS enabled on all Supabase tables
 ```
 
 ---
 
-## After the Report
+## REMEMBER
 
-End with this prompt:
-
-**"Would you like me to fix any of these issues? Tell me which ones and I'll implement the fixes."**
-
-DO NOT make any code changes until the user explicitly requests specific fixes.
+1. **No evidence = No finding.** Cannot show code? Do not report it.
+2. **Context matters.** Test file is not production code.
+3. **Check mitigations.** Look for validation nearby.
+4. **Be specific.** File, line number, exact code.
+5. **Quality over quantity.** 5 real findings beat 50 false positives.
 
 $ARGUMENTS
