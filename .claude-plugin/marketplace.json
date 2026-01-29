@@ -4,9 +4,12 @@
   "plugins": [
     {
       "name": "sap",
-      "source": ".",
+      "source": {
+        "source": "github",
+        "repo": "naieum/Bridge"
+      },
       "description": "Security Audit Plugin - 15-category security audit",
-      "version": "1.0.0"
+      "version": "2.0.0"
     }
   ]
 }
