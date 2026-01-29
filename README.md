@@ -49,15 +49,14 @@ Bridge gives Claude the security knowledge (what patterns to look for) but requi
 
 ## Installation
 
-```bash
-claude plugins add naieum/bridge
+In Claude Code, run:
+
+```
+/plugin marketplace add naieum/Bridge
+/plugin install bridge@naieum-bridge
 ```
 
-Or from local directory:
-
-```bash
-claude plugins add /path/to/bridge
-```
+Then restart Claude Code.
 
 ## Usage
 
