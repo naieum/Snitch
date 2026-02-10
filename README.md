@@ -64,6 +64,8 @@ In Claude Code, run:
 
 Then restart Claude Code.
 
+> **Note:** If updating from a previous version, uninstall first with `/plugin uninstall bridge@naieum-bridge`, then reinstall.
+
 ## Usage
 
 ```
