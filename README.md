@@ -59,12 +59,12 @@ In Claude Code, run:
 
 ```
 /plugin marketplace add naieum/Bridge
-/plugin install bridge@naieum-bridge
+/plugin install bridge@naieum-Bridge
 ```
 
 Then restart Claude Code.
 
-> **Note:** If updating from a previous version, uninstall first with `/plugin uninstall bridge@naieum-bridge`, then reinstall.
+> **Note:** If updating from a previous version, uninstall first with `/plugin uninstall bridge@naieum-Bridge`, then reinstall.
 
 ## Usage
 
