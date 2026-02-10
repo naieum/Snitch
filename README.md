@@ -22,7 +22,7 @@ Bridge gives Claude the security knowledge (what patterns to look for) but requi
 
 ## What it Checks
 
-["project-name]    |\n+------------------------------------------------------------+\n| What would you like to scan?                               |\n|                                                            |\n| [1] Quick Scan (Recommended)                               |\n| [2] Web Security                                           |\n| [3] Secrets & Authentication                              |\n| [4] Modern Stack                                           |\n| [5] Compliance (HIPAA/SOC2/PCI/GDPR)                        |\n| [6] Full System Scan                                       |\n| [7] Custom Selection                                       |\n| [8] Scan Changed Files Only (--diff)                       |\n| [0] Exit                                                   |\n|                                                            |\n| Enter your choice (0-8):                                   |\n+------------------------------------------------------------+\n```\n\n**Quick Scan** uses smart detection to scan only relevant categories based on your tech stack. **Custom Selection** lets you pick specific categories by number or name (e.g., \"1 3 5\" or \"sql injection secrets auth\").\n\n**Command Line Options:** You can also use arguments to bypass the menu:\n\n```bash\n/security --categories=1,2,3,13    # Scan specific categories\n/security --diff                   # Scan only changed files\n```\n\nAfter selecting, Claude will:\n1. Search for security patterns in selected categories\n2. Read the actual code to verify findings\n3. Check context (test file? sanitization? environment guards?)\n4. Report only confirmed issues with evidence\n\n## Output Format"]
+### 23 Security Categories
 
 **Core Security**
 1. **SQL Injection** - String concatenation in queries
@@ -64,7 +64,38 @@ In Claude Code, run:
 
 Then restart Claude Code.
 
-["project-name]    |\n+------------------------------------------------------------+\n| What would you like to scan?                               |\n|                                                            |\n| [1] Quick Scan (Recommended)                               |\n| [2] Web Security                                           |\n| [3] Secrets & Authentication                              |\n| [4] Modern Stack                                           |\n| [5] Compliance (HIPAA/SOC2/PCI/GDPR)                        |\n| [6] Full System Scan                                       |\n| [7] Custom Selection                                       |\n| [8] Scan Changed Files Only (--diff)                       |\n| [0] Exit                                                   |\n|                                                            |\n| Enter your choice (0-8):                                   |\n+------------------------------------------------------------+\n```\n\n**Quick Scan** uses smart detection to scan only relevant categories based on your tech stack. **Custom Selection** lets you pick specific categories by number or name (e.g., \"1 3 5\" or \"sql injection secrets auth\").\n\n**Command Line Options:** You can also use arguments to bypass the menu:\n\n```bash\n/security --categories=1,2,3,13    # Scan specific categories\n/security --diff                   # Scan only changed files\n```\n\nAfter selecting, Claude will:\n1. Search for security patterns in selected categories\n2. Read the actual code to verify findings\n3. Check context (test file? sanitization? environment guards?)\n4. Report only confirmed issues with evidence\n\n## Output Format"]
+## Usage
+
+```
+/security
+```
+
+You'll see an interactive menu with options:
+- **Quick Scan** - Smart detection selects relevant categories
+- **Web Security** - SQLi, XSS, CORS, SSRF, dangerous patterns
+- **Secrets & Auth** - Hardcoded secrets, authentication, rate limiting
+- **Modern Stack** - Stripe, auth providers, AI APIs, email, database, etc.
+- **Compliance** - HIPAA, SOC 2, PCI-DSS, GDPR
+- **Full System** - All 23 categories
+- **Custom Selection** - Pick by number or name
+- **Scan Changed Files** - Git diff mode
+
+**Quick Scan** uses smart detection to scan only relevant categories based on your tech stack. **Custom Selection** lets you pick categories by number or name (e.g., "1 3 5" or "sql injection secrets auth").
+
+**Command Line Options:** You can also use arguments to bypass the menu:
+
+```bash
+/security --categories=1,2,3,13    # Scan specific categories
+/security --diff                   # Scan only changed files
+```
+
+After selecting, Claude will:
+1. Search for security patterns in selected categories
+2. Read the actual code to verify findings
+3. Check context (test file? sanitization? environment guards?)
+4. Report only confirmed issues with evidence
+
+## Output Format
 
 Every finding includes:
 - **File and line number** - Exact location
@@ -81,7 +112,12 @@ The skill enforces these rules to prevent false claims:
 3. Every finding must quote the exact code
 4. Context check required (test file? mitigations nearby?)
 
-["project-name]    |\n+------------------------------------------------------------+\n| What would you like to scan?                               |\n|                                                            |\n| [1] Quick Scan (Recommended)                               |\n| [2] Web Security                                           |\n| [3] Secrets & Authentication                              |\n| [4] Modern Stack                                           |\n| [5] Compliance (HIPAA/SOC2/PCI/GDPR)                        |\n| [6] Full System Scan                                       |\n| [7] Custom Selection                                       |\n| [8] Scan Changed Files Only (--diff)                       |\n| [0] Exit                                                   |\n|                                                            |\n| Enter your choice (0-8):                                   |\n+------------------------------------------------------------+\n```\n\n**Quick Scan** uses smart detection to scan only relevant categories based on your tech stack. **Custom Selection** lets you pick specific categories by number or name (e.g., \"1 3 5\" or \"sql injection secrets auth\").\n\n**Command Line Options:** You can also use arguments to bypass the menu:\n\n```bash\n/security --categories=1,2,3,13    # Scan specific categories\n/security --diff                   # Scan only changed files\n```\n\nAfter selecting, Claude will:\n1. Search for security patterns in selected categories\n2. Read the actual code to verify findings\n3. Check context (test file? sanitization? environment guards?)\n4. Report only confirmed issues with evidence\n\n## Output Format"]
+## Version History
+
+- **2.2.0** - Added interactive scan selection menu with smart detection
+- **2.1.0** - Added HIPAA, SOC 2, PCI-DSS, and GDPR compliance categories (20-23)
+- **2.0.0** - Complete rewrite with anti-hallucination rules and context-aware analysis
+- **1.0.0** - Initial release with 21 security categories
 
 ## License
 
