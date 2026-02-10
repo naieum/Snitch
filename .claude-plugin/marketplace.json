@@ -1,0 +1,12 @@
+{
+  "name": "Bridge",
+  "id": "naieum-Bridge",
+  "author": "naieum",
+  "description": "Security Audit Plugin - Evidence-based security scanning with anti-hallucination rules and interactive scan selection",
+  "version": "2.2.0",
+  "repository": "https://github.com/naieum/Bridge",
+  "license": "MIT",
+  "skills": ["security"],
+  "category": "Security",
+  "tags": ["security", "audit", "vulnerability", "compliance", "HIPAA", "SOC2", "PCI-DSS", "GDPR"]
+}
