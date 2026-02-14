@@ -10,26 +10,43 @@ The result: you get a report where everything in it is real.
 
 ## Install
 
-### From the Marketplace (recommended)
+### From GitHub (recommended)
 
-In Claude Code, run:
+Two commands in Claude Code:
 
 ```
-/install-plugin naieum/Snitch
+/plugin marketplace add naieum/Snitch
+/plugin install snitch@naieum-Snitch
 ```
 
-That's it. Restart Claude Code and you're good.
+First one registers the marketplace. Second one installs the plugin. That's it.
 
-### Manual Install
+### From a Local Clone
 
 If you want to pin a version or just prefer doing things yourself:
 
 ```bash
-# Clone it wherever you keep your plugins
+# Clone it
 git clone https://github.com/naieum/Snitch.git
+```
 
-# In Claude Code, install from the local path
-/install-plugin /path/to/Snitch
+Then in Claude Code:
+
+```
+/plugin marketplace add /path/to/Snitch
+/plugin install snitch@naieum-Snitch
+```
+
+### Updating
+
+```
+/plugin marketplace update naieum-Snitch
+```
+
+### Uninstalling
+
+```
+/plugin uninstall snitch@naieum-Snitch
 ```
 
 ## Usage
