@@ -8,11 +8,11 @@
 
 An open source security audit skill for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Gemini CLI](https://github.com/google-gemini/gemini-cli), [Codex CLI](https://github.com/openai/codex), [OpenCode](https://github.com/opencode-ai/opencode), [Antigravity](https://github.com/neplextech/antigravity), and [Cursor](https://www.cursor.com/).
 
-Here's the thing about security scanners: they're terrible. They pattern-match `api_key = "..."` and flag it even when it's a comment, a test placeholder, or literally a detection pattern inside another security tool. You get 500 findings, 499 of them are garbage, and by finding 12 you've stopped reading. This is especially brutal when you're vibe coding - your AI is writing fast, you're shipping fast, and nobody's actually checking what went out the door. Traditional scanners make it worse because they train you to ignore their output.
+Here's the thing about security scanners: they're terrible. They pattern-match `api_key = "..."` and flag it even when it's a comment, a test placeholder, or literally a detection pattern inside another security tool. You get 500 findings, 499 of them are garbage, and by finding 12 you've stopped reading. This is especially brutal when you're vibe coding - your AI is writing fast, you're shipping fast, and nobody's actually checking what went out the door. Your AI built it, shipped it, and nobody reviewed it. Traditional scanners make it worse because they train you to ignore their output.
 
 Snitch is different. It gives your AI deep knowledge of what to look for across 32 security categories, but it **requires evidence for every single claim**. No file read? Not a finding. Can't quote the exact line? Not a finding. Didn't check if there's sanitization two lines above? Not a finding.
 
-The result: you get a report where everything in it is real. Your agentic coding tool becomes your security reviewer - one that actually understands context, not just regex.
+The result: you get a report where everything in it is real. Your AI writes the code, Snitch reviews it, you ship with confidence. The agentic workflow, complete.
 
 ## Install
 
