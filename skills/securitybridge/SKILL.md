@@ -41,10 +41,16 @@ These rules prevent false claims. Violating them invalidates your audit.
 - This applies to API keys, tokens, passwords, connection strings, and any sensitive values
 - Show enough X's to indicate a value exists, but never the actual secret
 
-### Rule 6: Redact Dangerous Patterns in Reports
-- When quoting code that contains dangerous patterns (shell execution, code evaluation, HTML injection, deserialization, OS commands), do NOT reproduce the literal code in the report
-- Instead, reference the finding by file path and line number and describe the pattern
-- Example: instead of quoting the literal dangerous call, write: `line 42: passes user input to dynamic code evaluation function`
+### Rule 6: Redact Dangerous Patterns in ALL Output
+- NEVER write literal dangerous pattern names anywhere in your output - not in findings, not in passed checks, not in bright spots, not in summaries
+- This applies to patterns like: DOM write methods, raw HTML property assignments, shell execution calls, dynamic code evaluation, unsafe deserialization, OS command functions
+- Instead, use generic descriptions:
+  - "No unsafe DOM write methods found" (not the literal method name)
+  - "No raw HTML injection patterns found" (not the literal property name)
+  - "No shell command injection found" (not the literal module/function name)
+  - "No dynamic code evaluation found" (not the literal function name)
+- For findings, reference by file path and line number and describe the pattern type
+- Example: `line 42: passes user input to a dynamic code evaluation function`
 - This prevents audit reports from being blocked by security hooks that scan written content for dangerous substrings
 - You MAY quote surrounding context that does not contain the triggering pattern
 
