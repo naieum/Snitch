@@ -1,4 +1,4 @@
-# Bridge - Security Audit Plugin for Claude Code
+# Bridge - Security Audit Plugin
 
 A Claude Code plugin that runs evidence-based security audits. Unlike automated scanners that flood you with false positives, Bridge uses Claude's reasoning to understand context and only report real issues.
 
@@ -58,13 +58,13 @@ Bridge gives Claude the security knowledge (what patterns to look for) but requi
 In Claude Code, run:
 
 ```
-/plugin marketplace add naieum/Bridge
-/plugin install bridge@naieum-Bridge
+/plugin marketplace add naieum/SecuritySuite
+/plugin install bridge@naieum-SecuritySuite
 ```
 
 Then restart Claude Code.
 
-> **Note:** If updating from a previous version, uninstall first with `/plugin uninstall bridge@naieum-Bridge`, then reinstall.
+> **Note:** If updating from a previous version, uninstall first with `/plugin uninstall bridge@naieum-SecuritySuite`, then reinstall.
 
 ## Usage
 
@@ -104,22 +104,6 @@ Every finding includes:
 - **Code snippet** - The actual vulnerable code
 - **Why it's vulnerable** - Context explanation
 - **How to fix** - Specific remediation
-
-## Anti-Hallucination Rules
-
-The skill enforces these rules to prevent false claims:
-
-1. No findings without reading the actual file first
-2. No summary claims like "found 47 issues" without evidence
-3. Every finding must quote the exact code
-4. Context check required (test file? mitigations nearby?)
-
-## Version History
-
-- **2.2.0** - Added interactive scan selection menu with smart detection
-- **2.1.0** - Added HIPAA, SOC 2, PCI-DSS, and GDPR compliance categories (20-23)
-- **2.0.0** - Complete rewrite with anti-hallucination rules and context-aware analysis
-- **1.0.0** - Initial release with 21 security categories
 
 ## License
 
