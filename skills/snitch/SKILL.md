@@ -117,21 +117,30 @@ When the skill is invoked with NO arguments, present this menu to the user:
 ║     - HIPAA, SOC 2, PCI-DSS, GDPR                                  ║
 ║     - Regulatory compliance requirements                           ║
 ╠════════════════════════════════════════════════════════════════════╣
-║ [6] Full System Scan                                              ║
-║     - All 23 categories                                           ║
+║ [6] Performance                                                    ║
+║     - Memory Leaks, N+1 Queries, Performance Problems             ║
+║     - Focus on runtime performance and efficiency                  ║
+╠════════════════════════════════════════════════════════════════════╣
+║ [7] Infrastructure & Supply Chain                                  ║
+║     - Dependencies, Authorization/IDOR, File Uploads              ║
+║     - Input Validation, CI/CD Security, Security Headers          ║
+║     - Focus on infrastructure and supply chain risks               ║
+╠════════════════════════════════════════════════════════════════════╣
+║ [8] Full System Scan                                              ║
+║     - All 32 categories                                           ║
 ║     - Comprehensive but uses more tokens                          ║
 ╠════════════════════════════════════════════════════════════════════╣
-║ [7] Custom Selection                                              ║
+║ [9] Custom Selection                                              ║
 ║     - Pick specific categories individually                       ║
 ║     - Select by name or number                                     ║
 ╠════════════════════════════════════════════════════════════════════╣
-║ [8] Scan Changed Files Only (--diff)                              ║
-║     - Run Git diff and scan only modified files                    ║
-║     - Good for pre-commit checks                                  ║
+║ [10] Scan Changed Files Only (--diff)                              ║
+║      - Run Git diff and scan only modified files                   ║
+║      - Good for pre-commit checks                                 ║
 ╠════════════════════════════════════════════════════════════════════╣
 ║ [0] Exit                                                           ║
 ╠════════════════════════════════════════════════════════════════════╣
-║ Enter your choice (0-8):                                           ║
+║ Enter your choice (0-10):                                          ║
 ╚════════════════════════════════════════════════════════════════════╝
 ```
 
@@ -149,25 +158,25 @@ When the skill is invoked with NO arguments, present this menu to the user:
 - Display: "Quick Scan selected. Scanning X categories..."
 - Proceed with scan
 
-#### If User Enters 2-6 (Presets)
+#### If User Enters 2-8 (Presets)
 - Scan the predefined category groups (see mapping below)
 - Display: "Web Security scan selected. Scanning Y categories..."
 - Proceed with scan
 
-#### If User Enters 7 (Custom Selection)
+#### If User Enters 9 (Custom Selection)
 - Present category selection menu (see below)
 - Accept both category numbers AND names
 - Display: "Custom scan selected. Scanning Z categories..."
 - Proceed with scan
 
-#### If User Enters 8 (Diff Mode)
+#### If User Enters 10 (Diff Mode)
 - Run `git diff HEAD --name-only` to get changed files
 - Scan only changed files + their dependencies
 - Display: "Diff scan selected. Scanning changed files..."
 - Proceed with scan
 
 #### If User Enters Invalid Input
-- Display: "Invalid choice. Please enter 0-8."
+- Display: "Invalid choice. Please enter 0-10."
 - Re-display menu
 
 #### If Arguments Provided (Skip Menu)
@@ -213,8 +222,23 @@ Categories: 20, 21, 22, 23
 - PCI-DSS (22)
 - GDPR (23)
 
-#### Group 6: Full System Scan
-Categories: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
+#### Group 6: Performance
+Categories: 24, 25, 26
+- Memory Leaks (24)
+- N+1 Queries (25)
+- Performance Problems (26)
+
+#### Group 7: Infrastructure & Supply Chain
+Categories: 27, 28, 29, 30, 31, 32
+- Dependency Vulnerabilities (27)
+- Authorization & Access Control (28)
+- File Upload Security (29)
+- Input Validation & ReDoS (30)
+- CI/CD Pipeline Security (31)
+- Security Headers (32)
+
+#### Group 8: Full System Scan
+Categories: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
 
 ---
 
@@ -287,6 +311,33 @@ Found Keywords: `card`, `payment`, `stripe`, `cvv`, `pan`:
 Found Keywords: `consent`, `gdpr`, `data-export`, `data-delete`:
 - Add Category 23 (GDPR)
 
+Found any React/Vue/Angular framework or any database package (`@prisma/client`, `drizzle-orm`, `pg`, `mysql2`, `mongoose`):
+- Add Category 24 (Memory Leaks)
+
+Found any ORM (`@prisma/client`, `drizzle-orm`, `typeorm`, `sequelize`, `mongoose`):
+- Add Category 25 (N+1 Queries)
+
+Found any web framework/ORM (`next`, `express`, `fastify`, `@prisma/client`, `drizzle-orm`) or `lodash` or `moment`:
+- Add Category 26 (Performance Problems)
+
+**Always Add:**
+- Category 27 (Dependency Vulnerabilities) - applies to every project with a package manifest
+
+Found any auth/database/API route package (`next-auth`, `@clerk/nextjs`, `@auth0/nextjs-auth0`, `@prisma/client`, `drizzle-orm`, `express`, `fastify`):
+- Add Category 28 (Authorization & Access Control / IDOR)
+
+Found `multer`, `formidable`, `busboy`, or `@uploadthing/*`:
+- Add Category 29 (File Upload Security)
+
+Found any web framework (`next`, `express`, `fastify`, `koa`, `hono`):
+- Add Category 30 (Input Validation & ReDoS)
+
+Found `.github/workflows` directory exists:
+- Add Category 31 (CI/CD Pipeline Security)
+
+Found any web framework (`next`, `express`, `fastify`):
+- Add Category 32 (Security Headers)
+
 #### Example Output
 
 ```
@@ -298,9 +349,9 @@ Starting scan...
 
 ---
 
-### Custom Selection Menu (Option 7)
+### Custom Selection Menu (Option 9)
 
-When user selects Option 7, present this menu:
+When user selects Option 9, present this menu:
 
 ```
 ══════════════════════════════════════════════════════════════════════
@@ -325,6 +376,15 @@ Compliance
   [20] HIPAA (20)                    [21] SOC 2 (21)
   [22] PCI-DSS (22)                  [23] GDPR (23)
 
+Performance
+  [24] Memory Leaks (24)             [25] N+1 Queries (25)
+  [26] Performance (26)
+
+Infrastructure & Supply Chain
+  [27] Dependencies (27)             [28] Authorization/IDOR (28)
+  [29] File Uploads (29)             [30] Input Validation (30)
+  [31] CI/CD Security (31)           [32] Security Headers (32)
+
 ══════════════════════════════════════════════════════════════════════
 
 Enter selection by NUMBER or NAME, separated by spaces:
@@ -344,7 +404,7 @@ Your selection:
 - For each item, check if it's a number or name
 - Map names to category numbers (case-insensitive, partial match)
 - Remove duplicates
-- Validate all categories are in range 1-23
+- Validate all categories are in range 1-32
 
 **Examples:**
 
@@ -365,7 +425,7 @@ Input: `"1 1 3 3"`
 
 Input: `"99 xyz"`
 → Invalid categories detected
-→ Display: "Invalid categories: 99, xyz. Please enter 1-23 or valid names."
+→ Display: "Invalid categories: 99, xyz. Please enter 1-32 or valid names."
 → Re-display menu
 
 #### Name to Category Mapping
@@ -396,6 +456,15 @@ Support flexible matching:
 "soc" or "soc2" → 21
 "pci" or "pcidss" → 22
 "gdpr" → 23
+"memory" or "memory leaks" → 24
+"n+1" or "n1" or "n plus 1" → 25
+"performance" or "perf" → 26
+"dependencies" or "supply chain" or "deps" → 27
+"authorization" or "idor" or "access control" → 28
+"upload" or "file upload" → 29
+"input" or "validation" or "redos" → 30
+"cicd" or "ci/cd" or "pipeline" or "github actions" → 31
+"headers" or "csp" or "security headers" → 32
 ```
 
 ---
@@ -1445,6 +1514,402 @@ Present these options:
 
 ---
 
+## CATEGORY 24: Memory Leaks
+
+### Detection
+- Frontend frameworks: React, Vue, Angular, Svelte with lifecycle hooks
+- Event-driven patterns: `addEventListener`, `.on()`, `.subscribe()`
+- Timer functions: `setInterval`, `setTimeout`
+- Connection patterns: WebSocket, database connections, streams
+
+### What to Search For
+- `addEventListener` without corresponding `removeEventListener` in cleanup
+- `useEffect` with timers or listeners but no cleanup return function
+- `setInterval`/`setTimeout` without clearing in cleanup
+- Module-scope `Map`/`Set` that grow without eviction or size limits
+- WebSocket/stream/connection opened without corresponding close
+- `.on()`/`.subscribe()` without `.off()`/`.unsubscribe()` in cleanup
+
+### Actually Vulnerable
+- Event listeners added in component mount without removal on unmount
+- `useEffect` creating intervals/subscriptions with no cleanup return
+- Module-level caches (`Map`, `Set`, `Object`) that grow unbounded
+- Database connections opened per-request without pooling or closing
+- WebSocket connections without close handlers
+
+### NOT Vulnerable
+- Event listeners with proper cleanup in `useEffect` return or `componentWillUnmount`
+- `setInterval` with matching `clearInterval` in cleanup
+- Caches with TTL, LRU eviction, or size limits
+- Connection pools (e.g., Prisma client singleton)
+- One-time static listeners (e.g., `process.on('uncaughtException')`)
+
+### Context Check
+1. Is there a cleanup function that removes the listener/timer?
+2. Is this a module-level singleton (acceptable) or per-request allocation?
+3. Does the cache have eviction or size limits?
+4. Is the connection pooled or per-request?
+
+### Files to Check
+- `**/components/**/*.tsx`, `**/hooks/**/*.ts`
+- `**/lib/**/*.ts`, `**/utils/**/*.ts`
+- `**/services/**/*.ts`, `**/workers/**/*.ts`
+
+---
+
+## CATEGORY 25: N+1 Queries
+
+### Detection
+- ORM usage: `@prisma/client`, `drizzle-orm`, `typeorm`, `sequelize`, `mongoose`
+- Database queries inside loops or array iteration methods
+- GraphQL resolvers with per-field data fetching
+
+### What to Search For
+- ORM `findUnique`/`findFirst`/`findOne` inside `for`/`forEach`/`map` loops
+- `await` database calls inside loop bodies
+- GraphQL field resolvers making individual database queries without DataLoader
+- Missing `include`/`select`/`populate` for relations accessed after initial query
+- `fetch()` per-item in loops in server-side code
+
+### Actually Vulnerable
+- `prisma.user.findUnique()` called inside a `for` loop iterating over IDs
+- `await db.query()` inside `array.map()` or `forEach()`
+- GraphQL resolver fetching related records one-by-one without batching
+- Fetching a list then looping to fetch each item's relations separately
+- Sequential API calls per-item when a batch endpoint exists
+
+### NOT Vulnerable
+- Single queries with `include`/`select` loading relations eagerly
+- Batch operations: `findMany`, `WHERE IN`, `Promise.all` with batch fetch
+- GraphQL resolvers using DataLoader for batching
+- Loop queries where the loop is bounded to a small known size (< 5)
+- Client-side fetching in user-triggered handlers (not render loops)
+
+### Context Check
+1. Is the database call actually inside a loop or iteration?
+2. Could this be replaced with a single query using `include`, `WHERE IN`, or batch fetch?
+3. Is the loop bounded to a small constant or potentially unbounded?
+4. Is this server-side code (performance impact) or client-side (less concern)?
+
+### Files to Check
+- `**/api/**/*.ts`, `**/routes/**/*.ts`
+- `**/services/**/*.ts`, `**/resolvers/**/*.ts`
+- `**/actions/**/*.ts`, `**/server/**/*.ts`
+- GraphQL resolver files
+
+---
+
+## CATEGORY 26: Performance Problems
+
+### Detection
+- Synchronous file system operations in request handlers
+- Database queries without indexes or limits
+- Full library imports in client bundles
+- Missing pagination on list endpoints
+- Sequential independent async operations
+
+### What to Search For
+- `fs.readFileSync`/`writeFileSync` in request handlers (not config/build scripts)
+- Prisma schema fields used in `where`/`orderBy` without `@@index`
+- `findMany({})`/`.find({})` without `take`/`limit` clause
+- `import _ from 'lodash'` (full library) in client-side code
+- List/search endpoints without pagination parameters (`skip`, `take`, `page`, `limit`)
+- Sequential independent `await` calls that should be `Promise.all`
+- Inline object/array literals in JSX props of mapped components (causes re-renders)
+
+### Actually Vulnerable
+- `fs.readFileSync` inside an API route handler or middleware
+- Database query on a frequently-filtered field with no index defined
+- `findMany({})` returning entire table with no limit
+- Full lodash import (`import _ from 'lodash'`) in a client-side bundle
+- API endpoint returning all records with no pagination
+- Three sequential `await` calls to independent services (should be parallel)
+
+### NOT Vulnerable
+- `readFileSync` in config loading at startup or build scripts
+- Queries on primary keys or already-indexed fields
+- `findMany` with explicit `take`/`limit` clause
+- Tree-shakeable imports (`import { debounce } from 'lodash/debounce'`)
+- Endpoints with cursor/offset pagination
+- Sequential awaits where each depends on the previous result
+
+### Context Check
+1. Is the sync file operation in a request handler or at startup/build time?
+2. Is the unindexed field actually used in production queries?
+3. Is the unbounded query on a table that will remain small or could grow large?
+4. Are the sequential awaits actually independent or do they depend on each other?
+
+### Files to Check
+- `**/api/**/*.ts`, `**/routes/**/*.ts`, `**/middleware/**/*.ts`
+- `prisma/schema.prisma` (check `@@index` directives)
+- `**/components/**/*.tsx` (check imports and JSX props)
+- `**/pages/**/*.tsx`, `**/app/**/*.tsx`
+
+---
+
+## CATEGORY 27: Dependency Vulnerabilities / Supply Chain
+
+### Detection
+- Package manifests: `package.json`, `requirements.txt`, `Gemfile`, `go.mod`
+- Lock files: `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`
+- CI/CD dependency installation steps
+
+### What to Search For
+- Missing lockfile entirely (non-deterministic installs)
+- `postinstall` scripts in dependencies doing suspicious things (network calls, file writes outside package)
+- Typosquatting indicators (packages with names very similar to popular ones)
+- Pinned to very old major versions of security-critical packages (e.g., `express` v3, `jsonwebtoken` v7)
+- Dependencies with known CVEs in the locked version
+- `npm audit` / `yarn audit` equivalent checks not present in CI
+
+### Actually Vulnerable
+- No lockfile committed (anyone running install gets potentially different versions)
+- Dependency with a `postinstall` script that downloads and executes remote code
+- Package name one character off from a popular package (potential typosquat)
+- Security-critical package pinned to end-of-life major version
+- Known CVE in locked dependency version with no override or resolution
+
+### NOT Vulnerable
+- Lock file present and committed
+- `postinstall` scripts that run standard build steps (tsc, node-gyp)
+- Well-known packages from verified publishers
+- Packages on current or recent major versions
+- Vulnerabilities only in devDependencies not shipped to production
+
+### Context Check
+1. Is the lockfile committed to the repository?
+2. Are suspicious postinstall scripts from trusted, well-known packages?
+3. Is the outdated package a dev-only dependency or shipped to production?
+4. Does the project have automated dependency auditing in CI?
+
+### Files to Check
+- `package.json`, `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`
+- `.github/workflows/*.yml` (check for audit steps)
+- `.npmrc`, `.yarnrc.yml` (registry configuration)
+
+---
+
+## CATEGORY 28: Authorization & Access Control (IDOR)
+
+### Detection
+- API routes accepting resource IDs as parameters
+- Database queries using user-supplied IDs
+- Role/permission systems and middleware
+- Admin routes and privileged operations
+
+### What to Search For
+- API routes that take resource IDs but don't verify ownership
+- Missing role/permission checks on admin routes
+- Sequential/predictable IDs used for resource access without auth checks
+- `findUnique({ where: { id } })` without ownership filter (e.g., no `userId` in where clause)
+- Missing authorization middleware (distinct from authentication)
+
+### Actually Vulnerable
+- `GET /api/users/:id` returning any user's data without checking if requester owns that resource
+- `DELETE /api/posts/:id` without verifying the post belongs to the authenticated user
+- Admin route (`/api/admin/*`) with no role check middleware
+- `prisma.order.findUnique({ where: { id: params.id } })` without `userId` filter
+- Endpoints using sequential integer IDs with no authorization check
+
+### NOT Vulnerable
+- Routes with ownership verification (`where: { id, userId: session.userId }`)
+- Admin routes protected by role-checking middleware
+- Public resources intentionally accessible to all (e.g., published blog posts)
+- Routes using UUIDs combined with proper authentication
+- Resources scoped by tenant/organization with middleware enforcement
+
+### Context Check
+1. Does the route verify the authenticated user owns or has access to the requested resource?
+2. Is there authorization middleware applied at the router level?
+3. Are these intentionally public endpoints?
+4. Is there a tenant/org scoping mechanism in place?
+
+### Files to Check
+- `**/api/**/*.ts`, `**/routes/**/*.ts`
+- `**/middleware/**/*.ts`
+- `**/actions/**/*.ts`, `**/server/**/*.ts`
+- `**/controllers/**/*.ts`
+
+---
+
+## CATEGORY 29: File Upload Security
+
+### Detection
+- File upload libraries: `multer`, `formidable`, `busboy`, `@uploadthing/*`
+- File handling: `multipart/form-data`, file write operations
+- Storage patterns: local file storage, S3 uploads, cloud storage
+
+### What to Search For
+- File uploads accepting any file type (no extension or MIME type validation)
+- User-controlled filenames used directly in file paths (path traversal via `../../`)
+- Uploads stored in publicly accessible directories (e.g., `public/uploads/`)
+- Missing file size limits on upload endpoints
+- No virus/malware scanning on uploaded files
+- File type checked only by extension, not by magic bytes/file signature
+
+### Actually Vulnerable
+- Upload handler with no file type restriction (`multer()` with no `fileFilter`)
+- `path.join(uploadDir, req.file.originalname)` using user-supplied filename directly
+- Files saved to `public/uploads/` accessible via direct URL
+- No `limits` configuration on multer/formidable (unlimited file size)
+- Extension-only validation (`.jpg`) without checking actual file content
+
+### NOT Vulnerable
+- File type validation checking both extension and MIME type
+- Filenames replaced with generated UUIDs/hashes
+- Files stored in private storage (S3 with signed URLs, not public directory)
+- File size limits configured on upload middleware
+- Upload middleware with proper `fileFilter` configuration
+
+### Context Check
+1. Is the filename sanitized or replaced before storage?
+2. Is there file type validation beyond just extension?
+3. Are uploaded files stored in a private or public location?
+4. Are file size limits configured?
+
+### Files to Check
+- `**/upload/**/*.ts`, `**/file/**/*.ts`
+- `**/api/**/*.ts` (routes handling multipart)
+- Multer/formidable configuration files
+- Storage utility files
+
+---
+
+## CATEGORY 30: Input Validation & ReDoS
+
+### Detection
+- File system operations with user input
+- Object merge/assign patterns with external data
+- Regular expressions in validation or parsing
+- Request body handling configuration
+- Template literals with dynamic content
+
+### What to Search For
+- Path traversal: `../` in user input passed to file system operations (`fs.readFile`, `path.join`)
+- Prototype pollution: `__proto__`, `constructor.prototype` in object merge/spread/assign
+- ReDoS: Regex with nested quantifiers (e.g., `(a+)+`, `(a|a)*`, `(.*a){x}`)
+- Missing request body size limits on Express/Fastify
+- `Object.assign` or spread with untrusted input without property filtering
+- Template literal injection in non-SQL contexts (log forging, header injection)
+
+### Actually Vulnerable
+- `fs.readFile(path.join(baseDir, req.query.file))` without sanitizing `../` sequences
+- `Object.assign(config, req.body)` allowing `__proto__` pollution
+- Regex like `/^(a+)+$/` used to validate user input (catastrophic backtracking)
+- Express app with no `express.json({ limit: '...' })` body size configuration
+- `lodash.merge(defaults, userInput)` with unsanitized user input
+
+### NOT Vulnerable
+- File paths validated against an allowlist or using `path.resolve` with base dir check
+- Object merge with explicit property picking (`{ name, email } = req.body`)
+- Simple regex without nested quantifiers
+- Body parser with explicit size limits configured
+- Input validated through schema validation (Zod, Joi, Yup)
+
+### Context Check
+1. Does user input flow into file system operations?
+2. Is object merging done with explicit property selection or raw input?
+3. Does the regex have nested quantifiers that could cause backtracking?
+4. Is there a body size limit configured on the HTTP framework?
+
+### Files to Check
+- `**/api/**/*.ts`, `**/routes/**/*.ts`
+- `**/middleware/**/*.ts`, `**/server*.ts`
+- `**/validation/**/*.ts`, `**/utils/**/*.ts`
+- Express/Fastify app configuration files
+
+---
+
+## CATEGORY 31: CI/CD Pipeline Security
+
+### Detection
+- GitHub Actions: `.github/workflows/*.yml`
+- GitLab CI: `.gitlab-ci.yml`
+- Other CI: `Jenkinsfile`, `.circleci/config.yml`, `azure-pipelines.yml`
+
+### What to Search For
+- Secrets hardcoded in workflow files (not using `${{ secrets.* }}`)
+- `pull_request_target` trigger with checkout of PR code (script injection vector)
+- Workflow `permissions` not scoped (defaults to write-all)
+- Expression injection in `run:` steps (e.g., `${{ github.event.issue.title }}` in shell)
+- Third-party actions pinned to branch tags instead of commit SHA
+- Self-hosted runners without isolation
+
+### Actually Vulnerable
+- API key or token as plain string in workflow YAML (not `${{ secrets.KEY }}`)
+- Workflow with `pull_request_target` that checks out PR branch and runs PR code
+- No `permissions:` key in workflow (inherits overly broad defaults)
+- `run: echo ${{ github.event.comment.body }}` (arbitrary code injection via comment)
+- `uses: actions/checkout@main` instead of `uses: actions/checkout@SHA`
+- Self-hosted runner used for public repository workflows
+
+### NOT Vulnerable
+- Secrets referenced via `${{ secrets.* }}` syntax
+- `pull_request` trigger (safe, runs in context of PR fork)
+- Explicit `permissions:` with minimal scopes (e.g., `contents: read`)
+- GitHub context values used in `with:` inputs (not shell `run:`)
+- Actions pinned to full SHA (`uses: actions/checkout@abc123...`)
+- Self-hosted runners for private repos with proper isolation
+
+### Context Check
+1. Is this a public or private repository?
+2. Does the workflow use `pull_request_target` with code checkout?
+3. Are GitHub context values used in shell `run:` commands or action `with:` inputs?
+4. Are third-party actions pinned to commit SHAs?
+
+### Files to Check
+- `.github/workflows/*.yml`
+- `.gitlab-ci.yml`, `Jenkinsfile`
+- `.circleci/config.yml`
+- CI/CD configuration in `package.json` scripts
+
+---
+
+## CATEGORY 32: Security Headers
+
+### Detection
+- Web frameworks: Next.js, Express, Fastify, Koa
+- Header configuration: `next.config.js`, `helmet` middleware, `_headers` files
+- Response header setting patterns
+
+### What to Search For
+- Missing `Content-Security-Policy` header
+- Missing `Strict-Transport-Security` (HSTS) header
+- Missing `X-Frame-Options` or `frame-ancestors` CSP directive
+- Missing `X-Content-Type-Options: nosniff`
+- Missing `Referrer-Policy` header
+- Overly permissive CSP (`unsafe-inline`, `unsafe-eval`, wildcard `*` sources)
+
+### Actually Vulnerable
+- No CSP header configured anywhere (no `next.config.js` headers, no helmet, no `_headers`)
+- No HSTS header on production deployment
+- No clickjacking protection (missing both `X-Frame-Options` and CSP `frame-ancestors`)
+- CSP with `unsafe-inline` and `unsafe-eval` (defeats purpose of CSP)
+- CSP with wildcard sources (`*.example.com` or `*`)
+- Missing `X-Content-Type-Options` allowing MIME sniffing
+
+### NOT Vulnerable
+- CSP configured in `next.config.js` headers, Express `helmet()`, or `_headers` file
+- HSTS configured at infrastructure level (Cloudflare, Vercel, load balancer)
+- `X-Frame-Options: DENY` or CSP `frame-ancestors 'none'` set
+- CSP with nonce-based inline scripts (not blanket `unsafe-inline`)
+- Strict `Referrer-Policy` configured
+
+### Context Check
+1. Is CSP configured at application level or infrastructure level?
+2. Is HSTS handled by the hosting platform (Vercel, Cloudflare)?
+3. Are `unsafe-inline`/`unsafe-eval` required for the framework (some need it with nonces)?
+4. Is this an API-only service (some headers less relevant)?
+
+### Files to Check
+- `next.config.js`, `next.config.ts` (check `headers()` function)
+- `**/middleware*.ts` (check response header setting)
+- Express/Fastify app setup files (check for `helmet()`)
+- `public/_headers`, `vercel.json`, `netlify.toml`
+- `**/server*.ts`, `**/app*.ts`
+
+---
+
 ## FINAL REPORT FORMAT
 
 ```markdown
@@ -1473,6 +1938,15 @@ Present these options:
 - [ ] Audit logging on sensitive routes (Category 21 - SOC 2)
 - [ ] No raw card data stored (Category 22 - PCI-DSS)
 - [ ] Data deletion endpoints exist (Category 23 - GDPR)
+- [ ] Event listeners properly cleaned up (Category 24 - Memory Leaks)
+- [ ] No database queries inside loops (Category 25 - N+1 Queries)
+- [ ] No synchronous file I/O in request handlers (Category 26 - Performance)
+- [ ] Lockfile present and committed (Category 27 - Dependencies)
+- [ ] Resource ownership verified on all endpoints (Category 28 - Authorization)
+- [ ] File uploads validated and sanitized (Category 29 - File Uploads)
+- [ ] Input validation with schema library (Category 30 - Input Validation)
+- [ ] CI/CD secrets use proper references (Category 31 - CI/CD Security)
+- [ ] Security headers configured (Category 32 - Security Headers)
 ```
 
 **IMPORTANT:** When reporting findings involving secrets, ALWAYS redact the actual values:

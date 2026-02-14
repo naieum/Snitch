@@ -6,17 +6,17 @@
 /____/_/ |_/___/ /_/  \____/_/ /_/
 ```
 
-A security audit skill for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Gemini CLI](https://github.com/google-gemini/gemini-cli), and [Codex CLI](https://github.com/openai/codex).
+An open source security audit skill for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Gemini CLI](https://github.com/google-gemini/gemini-cli), [Codex CLI](https://github.com/openai/codex), [OpenCode](https://github.com/opencode-ai/opencode), [Antigravity](https://github.com/neplextech/antigravity), and [Cursor](https://www.cursor.com/).
 
-Here's the thing about security scanners: they're terrible. They pattern-match `api_key = "..."` and flag it even when it's a comment, a test placeholder, or literally a detection pattern inside another security tool. You get 500 findings, 499 of them are garbage, and by finding 12 you've stopped reading.
+Here's the thing about security scanners: they're terrible. They pattern-match `api_key = "..."` and flag it even when it's a comment, a test placeholder, or literally a detection pattern inside another security tool. You get 500 findings, 499 of them are garbage, and by finding 12 you've stopped reading. This is especially brutal when you're vibe coding - your AI is writing fast, you're shipping fast, and nobody's actually checking what went out the door. Traditional scanners make it worse because they train you to ignore their output.
 
-Snitch is different. It gives your AI deep knowledge of what to look for across 23 security categories, but it **requires evidence for every single claim**. No file read? Not a finding. Can't quote the exact line? Not a finding. Didn't check if there's sanitization two lines above? Not a finding.
+Snitch is different. It gives your AI deep knowledge of what to look for across 32 security categories, but it **requires evidence for every single claim**. No file read? Not a finding. Can't quote the exact line? Not a finding. Didn't check if there's sanitization two lines above? Not a finding.
 
-The result: you get a report where everything in it is real.
+The result: you get a report where everything in it is real. Your agentic coding tool becomes your security reviewer - one that actually understands context, not just regex.
 
 ## Install
 
-Pick your platform:
+Pick your weapon. Snitch works everywhere:
 
 ### Claude Code
 
@@ -30,7 +30,7 @@ That's it. Two commands. First one registers the marketplace, second one install
 ### Gemini CLI
 
 ```bash
-gemini extensions install naieum/Snitch
+gemini extensions install https://github.com/naieum/Snitch.git
 ```
 
 One command. Done.
@@ -43,6 +43,33 @@ cp -r Snitch/agents/skills/snitch ~/.codex/skills/snitch
 ```
 
 Clone it, copy the skill to your global skills directory. If you'd rather scope it to a single project, use `.agents/skills/snitch` instead of `~/.codex/skills/snitch`.
+
+### OpenCode
+
+```bash
+git clone https://github.com/naieum/Snitch.git
+cp -r Snitch/skills/snitch ~/.config/opencode/skills/snitch
+```
+
+Clone, copy, done. That's a global install - if you want it scoped to one project, use `.opencode/skills/snitch` instead.
+
+### Antigravity
+
+```bash
+git clone https://github.com/naieum/Snitch.git
+cp -r Snitch/skills/snitch ~/.gemini/antigravity/skills/snitch
+```
+
+Same deal. Global install. For a single project, drop it in `.agent/skills/snitch` instead.
+
+### Cursor
+
+```bash
+git clone https://github.com/naieum/Snitch.git
+cp -r Snitch/skills/snitch .cursor/skills/snitch
+```
+
+Project-level only. Drop it in `.cursor/skills/` and Cursor picks it up.
 
 ---
 
@@ -68,6 +95,21 @@ gemini extensions uninstall snitch
 rm -rf ~/.codex/skills/snitch
 ```
 
+**OpenCode:**
+```bash
+rm -rf ~/.config/opencode/skills/snitch
+```
+
+**Antigravity:**
+```bash
+rm -rf ~/.gemini/antigravity/skills/snitch
+```
+
+**Cursor:**
+```bash
+rm -rf .cursor/skills/snitch
+```
+
 </details>
 
 ## Usage
@@ -84,9 +126,11 @@ You'll get an interactive menu:
 [3] Secrets & Auth      - Hardcoded keys, auth issues, rate limiting
 [4] Modern Stack        - Stripe, Supabase, OpenAI, Resend, Twilio, etc.
 [5] Compliance          - HIPAA, SOC 2, PCI-DSS, GDPR
-[6] Full System         - All 23 categories (thorough but uses more tokens)
-[7] Custom Selection    - Pick specific categories by number or name
-[8] Changed Files Only  - Git diff mode, great for pre-commit
+[6] Performance         - Memory leaks, N+1 queries, performance issues
+[7] Infrastructure      - Dependencies, IDOR, file uploads, CI/CD, headers
+[8] Full System         - All 32 categories (thorough but uses more tokens)
+[9] Custom Selection    - Pick specific categories by number or name
+[10] Changed Files Only - Git diff mode, great for pre-commit
 ```
 
 **Quick Scan** is what you want 90% of the time. It reads your `package.json`, figures out you're using Prisma and Stripe and Resend, and only scans the categories that matter. No wasted tokens checking for Twilio issues in a project that doesn't use Twilio.
@@ -109,13 +153,17 @@ Once Snitch finishes, it'll ask you what to do next:
 
 ## What It Checks
 
-### 23 Categories
+### 32 Categories
 
 **Core Security** - SQL Injection, XSS, Hardcoded Secrets, Authentication, SSRF, Rate Limiting, CORS, Cryptography, Dangerous Patterns, Cloud Security, Data Exposure
 
 **Modern Stack** - Supabase (RLS, service role keys), Stripe (webhook verification, key exposure), Auth Providers (Clerk/Auth0/NextAuth middleware), AI APIs (OpenAI/Anthropic key exposure, prompt injection), Email (Resend/SendGrid spam relay), Database (Prisma raw queries), Redis/Upstash (token exposure), Twilio (SMS pumping)
 
 **Compliance** - HIPAA (PHI in logs, unencrypted health data), SOC 2 (audit trails, MFA, password policy), PCI-DSS (card data storage, CVV retention), GDPR (consent, data deletion, data export)
+
+**Performance** - Memory Leaks (event listeners, intervals, unbounded caches), N+1 Queries (ORM queries in loops, missing eager loading), Performance Problems (sync I/O in handlers, missing indexes, unbounded queries, full library imports)
+
+**Infrastructure & Supply Chain** - Dependency Vulnerabilities (missing lockfiles, outdated packages, typosquatting), Authorization/IDOR (missing ownership checks, predictable IDs), File Upload Security (path traversal, missing validation), Input Validation/ReDoS (prototype pollution, catastrophic backtracking), CI/CD Pipeline Security (secret exposure, expression injection, unpinned actions), Security Headers (CSP, HSTS, clickjacking protection)
 
 ## How It Actually Works
 
