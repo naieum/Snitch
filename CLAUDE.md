@@ -1,10 +1,10 @@
-# SAP - Security Audit Plugin
+# Snitch - Security Audit Plugin
 
-This repository contains **Bridge**, a Claude Code security audit plugin.
+This repository contains **Snitch**, a Claude Code security audit plugin.
 
 ## Important Context for Editing
 
-- **`skills/securitybridge/SKILL.md`** is the Bridge audit skill. It guides Claude through security audits of other projects.
+- **`skills/snitch/SKILL.md`** is the Snitch audit skill. It guides Claude through security audits of other projects.
 
 ## Report Generation
 

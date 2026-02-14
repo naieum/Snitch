@@ -1,10 +1,10 @@
-# Bridge
+# Snitch
 
 A security audit plugin for [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
 
 Here's the thing about security scanners: they're terrible. They pattern-match `api_key = "..."` and flag it even when it's a comment, a test placeholder, or literally a detection pattern inside another security tool. You get 500 findings, 499 of them are garbage, and by finding 12 you've stopped reading.
 
-Bridge is different. It gives Claude deep knowledge of what to look for across 23 security categories, but it **requires evidence for every single claim**. No file read? Not a finding. Can't quote the exact line? Not a finding. Didn't check if there's sanitization two lines above? Not a finding.
+Snitch is different. It gives Claude deep knowledge of what to look for across 23 security categories, but it **requires evidence for every single claim**. No file read? Not a finding. Can't quote the exact line? Not a finding. Didn't check if there's sanitization two lines above? Not a finding.
 
 The result: you get a report where everything in it is real.
 
@@ -15,7 +15,7 @@ The result: you get a report where everything in it is real.
 In Claude Code, run:
 
 ```
-/install-plugin naieum/Bridge
+/install-plugin naieum/Snitch
 ```
 
 That's it. Restart Claude Code and you're good.
@@ -26,16 +26,16 @@ If you want to pin a version or just prefer doing things yourself:
 
 ```bash
 # Clone it wherever you keep your plugins
-git clone https://github.com/naieum/Bridge.git
+git clone https://github.com/naieum/Snitch.git
 
 # In Claude Code, install from the local path
-/install-plugin /path/to/Bridge
+/install-plugin /path/to/Snitch
 ```
 
 ## Usage
 
 ```
-/securitybridge
+/snitch
 ```
 
 You'll get an interactive menu:
@@ -56,13 +56,13 @@ You'll get an interactive menu:
 You can also skip the menu entirely:
 
 ```
-/securitybridge --categories=1,2,3,13
-/securitybridge --diff
+/snitch --categories=1,2,3,13
+/snitch --diff
 ```
 
 ### After the Scan
 
-Once Bridge finishes, it'll ask you what to do next:
+Once Snitch finishes, it'll ask you what to do next:
 
 - **Run another scan** - go back to the menu, audit more categories
 - **Fix one by one** - walk through each finding, approve or skip fixes individually
@@ -81,13 +81,13 @@ Once Bridge finishes, it'll ask you what to do next:
 
 ## How It Actually Works
 
-Bridge isn't just a list of regex patterns. For every category, it knows:
+Snitch isn't just a list of regex patterns. For every category, it knows:
 
 1. **What to search for** - the grep patterns and file globs
 2. **What's actually vulnerable** - vs. what just looks scary
 3. **What context to check** - is this test code? is there validation nearby? is it server-only?
 
-Every finding in the report includes the file path, line number, exact code snippet, why it's vulnerable, and how to fix it. If Bridge can't prove it with evidence from your actual codebase, it doesn't report it.
+Every finding in the report includes the file path, line number, exact code snippet, why it's vulnerable, and how to fix it. If Snitch can't prove it with evidence from your actual codebase, it doesn't report it.
 
 ## Want to See It in Action?
 
@@ -102,9 +102,9 @@ npm run db:seed
 npm run dev
 ```
 
-Then open Claude Code in the vibeHealth directory and run `/securitybridge`. Watch it find everything.
+Then open Claude Code in the vibeHealth directory and run `/snitch`. Watch it find everything.
 
-It's a good way to see what Bridge reports look like before running it on your actual codebase.
+It's a good way to see what Snitch reports look like before running it on your actual codebase.
 
 ## License
 

@@ -1,17 +1,17 @@
 {
-  "name": "naieum-SecuritySuite",
+  "name": "naieum-Snitch",
   "owner": {
-    "name": "naieum",
+    "name": "Khuur",
     "url": "https://github.com/naieum"
   },
   "plugins": [
     {
-      "name": "bridge",
+      "name": "snitch",
       "description": "Security Audit Plugin - Evidence-based security scanning with anti-hallucination rules and interactive scan selection. 23 categories including HIPAA, SOC 2, PCI-DSS, and GDPR compliance.",
-      "version": "2.2.0",
+      "version": "3.0.0",
       "source": "./",
       "author": {
-        "name": "naieum"
+        "name": "Khuur"
       }
     }
   ]

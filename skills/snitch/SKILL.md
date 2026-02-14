@@ -1,5 +1,5 @@
 ---
-name: securitybridge
+name: snitch
 description: Comprehensive security audit with evidence-based findings. Combines deep pattern knowledge with contextual reasoning to eliminate false positives.
 ---
 
