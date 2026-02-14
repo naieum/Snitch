@@ -8,7 +8,7 @@ const signatures = require('./signatures.json');
 // Load new analysis modules
 const SemanticAnalyzer = require('./semantic-analyzer');
 const FeedbackSystem = require('./feedback-system');
-// const CrossFileAnalyzer = require('./cross-file-analyzer'); // Temporarily disabled
+const CrossFileAnalyzer = require('./cross-file-analyzer');
 
 // Convert signatures to internal pattern format
 const MALICIOUS_PATTERNS = [];
@@ -227,7 +227,7 @@ class Scanner {
     this.threatAnalyzer = new AgenticThreatAnalyzer();
     this.semanticAnalyzer = new SemanticAnalyzer();
     this.feedbackSystem = new FeedbackSystem();
-    // this.crossFileAnalyzer = new CrossFileAnalyzer(); // Temporarily disabled
+    this.crossFileAnalyzer = new CrossFileAnalyzer();
     this.options = {
       enableSemanticAnalysis: options.semantic !== false,
       enableFeedback: options.feedback !== false,
