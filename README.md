@@ -6,7 +6,7 @@
 /____/_/ |_/___/ /_/  \____/_/ /_/
 ```
 
-A security audit skill for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Gemini CLI](https://github.com/google-gemini/gemini-cli), and [Codex CLI](https://github.com/openai/codex). Same repo, same skill, all three platforms.
+A security audit skill for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Gemini CLI](https://github.com/google-gemini/gemini-cli), and [Codex CLI](https://github.com/openai/codex).
 
 Here's the thing about security scanners: they're terrible. They pattern-match `api_key = "..."` and flag it even when it's a comment, a test placeholder, or literally a detection pattern inside another security tool. You get 500 findings, 499 of them are garbage, and by finding 12 you've stopped reading.
 
@@ -16,7 +16,7 @@ The result: you get a report where everything in it is real.
 
 ## Install
 
-It's the same repo for all three platforms. Pick yours:
+Pick your platform:
 
 ### Claude Code
 
@@ -46,7 +46,7 @@ Clone it, copy the skill to your global skills directory. If you'd rather scope 
 
 ---
 
-Then run `/snitch` in any project. Same skill, same 23 categories, same evidence-based approach regardless of which CLI you're using.
+Then run `/snitch` in any project.
 
 <details>
 <summary>Updating / Uninstalling</summary>
