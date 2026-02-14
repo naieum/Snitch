@@ -1,53 +1,56 @@
 # Snitch
 
-A security audit plugin for [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
+A security audit skill for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Gemini CLI](https://github.com/google-gemini/gemini-cli), and [Codex CLI](https://github.com/openai/codex). Same repo, same skill, all three platforms.
 
 Here's the thing about security scanners: they're terrible. They pattern-match `api_key = "..."` and flag it even when it's a comment, a test placeholder, or literally a detection pattern inside another security tool. You get 500 findings, 499 of them are garbage, and by finding 12 you've stopped reading.
 
-Snitch is different. It gives Claude deep knowledge of what to look for across 23 security categories, but it **requires evidence for every single claim**. No file read? Not a finding. Can't quote the exact line? Not a finding. Didn't check if there's sanitization two lines above? Not a finding.
+Snitch is different. It gives your AI deep knowledge of what to look for across 23 security categories, but it **requires evidence for every single claim**. No file read? Not a finding. Can't quote the exact line? Not a finding. Didn't check if there's sanitization two lines above? Not a finding.
 
 The result: you get a report where everything in it is real.
 
 ## Install
 
-### From GitHub (recommended)
+It's the same repo for all three platforms. Pick yours:
 
-Two commands in Claude Code:
+### Claude Code
 
 ```
 /plugin marketplace add naieum/Snitch
 /plugin install snitch@naieum-Snitch
 ```
 
-First one registers the marketplace. Second one installs the plugin. That's it.
+That's it. Two commands. First one registers the marketplace, second one installs the plugin.
 
-### From a Local Clone
-
-If you want to pin a version or just prefer doing things yourself:
+### Gemini CLI
 
 ```bash
-# Clone it
+gemini extensions install naieum/Snitch
+```
+
+One command. Done.
+
+### Codex CLI
+
+```bash
 git clone https://github.com/naieum/Snitch.git
+cp -r Snitch/agents/skills/snitch ~/.codex/skills/snitch
 ```
 
-Then in Claude Code:
+Clone it, copy the skill to your global skills directory. If you'd rather scope it to a single project, use `.agents/skills/snitch` instead of `~/.codex/skills/snitch`.
 
-```
-/plugin marketplace add /path/to/Snitch
-/plugin install snitch@naieum-Snitch
-```
+---
 
-### Updating
+Then run `/snitch` in any project. Same skill, same 23 categories, same evidence-based approach regardless of which CLI you're using.
+
+<details>
+<summary>Updating / Uninstalling (Claude Code)</summary>
 
 ```
 /plugin marketplace update naieum-Snitch
-```
-
-### Uninstalling
-
-```
 /plugin uninstall snitch@naieum-Snitch
 ```
+
+</details>
 
 ## Usage
 
@@ -119,7 +122,7 @@ npm run db:seed
 npm run dev
 ```
 
-Then open Claude Code in the vibeHealth directory and run `/snitch`. Watch it find everything.
+Then open your CLI of choice in the vibeHealth directory and run `/snitch`. Watch it find everything.
 
 It's a good way to see what Snitch reports look like before running it on your actual codebase.
 
