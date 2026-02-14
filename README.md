@@ -69,7 +69,7 @@ Then restart Claude Code.
 ## Usage
 
 ```
-/security
+/securitybridge
 ```
 
 You'll see an interactive menu with options:
@@ -87,8 +87,8 @@ You'll see an interactive menu with options:
 **Command Line Options:** You can also use arguments to bypass the menu:
 
 ```bash
-/security --categories=1,2,3,13    # Scan specific categories
-/security --diff                   # Scan only changed files
+/securitybridge --categories=1,2,3,13    # Scan specific categories
+/securitybridge --diff                   # Scan only changed files
 ```
 
 After selecting, Claude will:

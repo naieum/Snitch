@@ -1,5 +1,5 @@
 ---
-name: security
+name: securitybridge
 description: Comprehensive security audit with evidence-based findings. Combines deep pattern knowledge with contextual reasoning to eliminate false positives.
 ---
 
@@ -165,7 +165,7 @@ When the skill is invoked with NO arguments, present this menu to the user:
 - Re-display menu
 
 #### If Arguments Provided (Skip Menu)
-- If user runs with arguments (e.g., `/security --categories=1,2,3`):
+- If user runs with arguments (e.g., `/securitybridge --categories=1,2,3`):
 - SKIP the interactive menu entirely
 - Use the provided arguments to determine what to scan
 - Proceed directly to execution
@@ -397,7 +397,7 @@ Support flexible matching:
 ### Updated Execution Flow
 
 **STEP 0: Check for Arguments**
-- If user provided arguments (e.g., `/security --categories=1,2,3`):
+- If user provided arguments (e.g., `/securitybridge --categories=1,2,3`):
   - Skip interactive menu
   - Parse arguments to determine categories
   - Proceed to Step 2
@@ -415,11 +415,13 @@ Support flexible matching:
   2. **Read** - Use Read to see the actual code in context
   3. **Analyze** - Apply the context rules below to determine if it is real
   4. **Report** - Only report with quoted evidence
+- **SCOPE RULE:** ONLY scan, report on, and mention the selected categories. Do NOT include findings, passed checks, bright spots, or commentary about categories outside the selected scope. If you observe something outside scope while scanning, ignore it entirely.
 
 **STEP 3: Generate Report**
 - Generate findings report
 - Display summary in console
 - Save to file (SECURITY_AUDIT_REPORT.md)
+- **SCOPE RULE:** The report (including Passed Checks and any summary sections) must ONLY reference the selected categories. Do not list passed checks for categories that were not scanned.
 
 ---
 
@@ -1341,8 +1343,19 @@ Support flexible matching:
 
 ### Critical
 - Personal data collection without `consent`, `opt_in`, or `agreed` verification (Art 6)
-- No `/delete`, `forgetMe`, or `eraseUser` endpoints for personal data (Art 17)
-- No `/export`, `downloadData`, or `portability` endpoints (Art 20)
+- No data deletion capability for personal data (Art 17 - Right to Erasure). Search broadly for ANY of these patterns:
+  - Route/endpoint names: `delete`, `remove`, `erase`, `purge`, `destroy`, `forget`, `wipe`, `clear`
+  - Function names: `deleteUser`, `removeAccount`, `eraseUser`, `forgetMe`, `purgeData`, `destroyAccount`, `closeAccount`, `deactivateAccount`
+  - Combined with: `user`, `account`, `profile`, `data`, `personal`, `member`, `customer`
+  - API paths: `/delete`, `/remove`, `/erase`, `/account/close`, `/me/delete`, `/privacy/delete`
+  - If ANY deletion mechanism exists (regardless of naming), it satisfies Art 17
+- No data export/portability capability (Art 20 - Right to Data Portability). Search broadly for ANY of these patterns:
+  - Route/endpoint names: `export`, `download`, `portability`, `extract`, `dump`, `backup`, `archive`
+  - Function names: `exportData`, `downloadData`, `getUserData`, `getMyData`, `extractData`, `generateReport`, `downloadProfile`
+  - Combined with: `user`, `account`, `profile`, `data`, `personal`, `member`, `customer`
+  - API paths: `/export`, `/download`, `/me/data`, `/privacy/export`, `/account/data`
+  - File generation: `csv`, `json`, `pdf`, `zip` exports of user data
+  - If ANY export mechanism exists (regardless of naming), it satisfies Art 20
 - EU user data sent to non-EU endpoints without transfer safeguards (Art 44-49)
 
 ### High
@@ -1364,7 +1377,8 @@ Support flexible matching:
 
 ### NOT Vulnerable
 - Consent verification before data collection
-- Working data deletion and export endpoints
+- Any working data deletion mechanism, regardless of naming convention
+- Any working data export/download mechanism, regardless of naming convention
 - Anonymized or pseudonymized data for analytics
 - Proper data retention with automated cleanup
 - Consent management platform integration
@@ -1373,10 +1387,12 @@ Support flexible matching:
 ### Files to Check
 - User registration and data collection endpoints
 - Privacy/settings pages
+- Account management pages (settings, profile, close account)
 - Analytics initialization code
-- Data export/deletion handlers
+- Data export/deletion handlers (search broadly: `delete`, `remove`, `export`, `download`, `extract`, etc.)
 - Cookie consent components
 - Third-party integrations sending user data
+- Admin panels with user management features
 
 ---
 
@@ -1427,5 +1443,6 @@ Support flexible matching:
 6. **Detect before checking.** Confirm a service is used before auditing it.
 7. **Server vs Client matters.** Secrets in server-only code are often fine.
 8. **Redact all secrets.** Replace actual values with X's in all output.
+9. **Stay in scope.** Only report on selected categories. No findings, passed checks, or bright spots for unselected categories.
 
 $ARGUMENTS

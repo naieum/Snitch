@@ -4,7 +4,7 @@ This repository contains **Bridge**, a Claude Code security audit plugin.
 
 ## Important Context for Editing
 
-- **`skills/security/SKILL.md`** is the Bridge audit skill. It guides Claude through security audits of other projects.
+- **`skills/securitybridge/SKILL.md`** is the Bridge audit skill. It guides Claude through security audits of other projects.
 
 ## Report Generation
 
