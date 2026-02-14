@@ -429,6 +429,49 @@ Support flexible matching:
 - Save to file (SECURITY_AUDIT_REPORT.md)
 - **SCOPE RULE:** The report (including Passed Checks and any summary sections) must ONLY reference the selected categories. Do not list passed checks for categories that were not scanned.
 
+**STEP 4: Post-Scan Actions**
+- After displaying the report, present the user with next steps using AskUserQuestion:
+
+```
+Scan complete. What would you like to do next?
+```
+
+Present these options:
+
+| Option | Label | Description |
+|--------|-------|-------------|
+| 1 | Run another scan | Return to the scan selection menu to audit additional categories |
+| 2 | Fix issues one by one | Walk through each finding individually, applying fixes with your approval |
+| 3 | Fix all issues (batch) | Apply fixes for all findings at once, then review the changes |
+| 4 | Done | Exit the security audit |
+
+#### Post-Scan Option Behavior
+
+**Option 1: Run another scan**
+- Return to STEP 1 (present the interactive menu again)
+- Previous findings remain in the saved report
+- New scan appends to or replaces the report
+
+**Option 2: Fix issues one by one**
+- For each finding (ordered by severity: Critical → High → Medium → Low):
+  1. Display the finding (file, line, evidence, fix description)
+  2. Ask the user: "Apply this fix?" with options: Yes / Skip / Stop fixing
+  3. If Yes: apply the fix, show the change, move to the next finding
+  4. If Skip: move to the next finding without changes
+  5. If Stop: exit the fix loop, return to the post-scan menu (re-present STEP 4)
+- After all findings are processed, return to the post-scan menu (re-present STEP 4)
+
+**Option 3: Fix all issues (batch)**
+- Display a summary of all fixes that will be applied
+- Ask the user to confirm: "Apply all X fixes?" with options: Yes / No
+- If Yes: apply all fixes, then display a summary of changes made
+- If No: return to the post-scan menu (re-present STEP 4)
+- After batch fix completes, return to the post-scan menu (re-present STEP 4)
+
+**Option 4: Done**
+- Display: "Security audit complete. Report saved to SECURITY_AUDIT_REPORT.md."
+- Exit the skill
+
 ---
 
 ## CATEGORY 1: SQL Injection
