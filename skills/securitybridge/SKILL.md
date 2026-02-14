@@ -468,21 +468,21 @@ Support flexible matching:
 - DOM manipulation patterns in client-side code
 
 ### What to Search For
-- innerHTML assignments
-- React unsafe HTML rendering
-- document.write calls
+- DOM property assignments that inject raw HTML (the `inner` + `HTML` property)
+- React unsafe HTML rendering (the `dangerously` + `SetInnerHTML` prop)
+- DOM write methods (the `document` `.write` method)
 - Vue v-html directive
 - Unescaped template output
 
 ### Actually Vulnerable
-- Assigning user input directly to innerHTML
-- Rendering user content as raw HTML in React
-- Writing user data with document.write
+- Assigning user input directly to the DOM's raw HTML property
+- Rendering user content as raw HTML in React via unsafe props
+- Writing user data via DOM write methods
 - Vue v-html with user-controlled content
 
 ### NOT Vulnerable
 - Static HTML content assignment
-- Using textContent instead of innerHTML
+- Using textContent instead of raw HTML properties
 - Content sanitized with DOMPurify before use
 - Admin-only or trusted source content
 
@@ -758,9 +758,9 @@ Support flexible matching:
 ## CATEGORY 10: Dangerous Code Patterns
 
 ### Detection
-- Dynamic evaluation: `eval`, `Function()`, `vm.runInContext`
-- Shell execution: `child_process`, `exec`, `spawn`, `execSync`
-- Deserialization: `JSON.parse` with untrusted input, `yaml.load`, Python pickle
+- Dynamic code evaluation functions (JS eval, dynamic Function constructor, VM context runners)
+- Shell/process execution modules (Node process spawning, shell command runners, sync variants)
+- Unsafe deserialization (JSON.parse with untrusted input, YAML unsafe load, Python serialization modules)
 
 ### What to Search For
 - Dynamic code evaluation patterns
