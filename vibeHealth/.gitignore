@@ -1,0 +1,10 @@
+node_modules/
+.next/
+out/
+*.db
+*.db-journal
+.env
+.env.local
+.env.production
+coverage/
+.vercel
