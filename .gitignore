@@ -2,5 +2,8 @@
 !.env.example
 *.pem
 *.key
+*.db
+*.db-journal
 .DS_Store
 node_modules/
+SECURITY_AUDIT_REPORT.md

@@ -1,70 +1,36 @@
-# Bridge - Security Audit Plugin
+# Bridge
 
-A Claude Code plugin that runs evidence-based security audits. Unlike automated scanners that flood you with false positives, Bridge uses Claude's reasoning to understand context and only report real issues.
+A security audit plugin for [Claude Code](https://docs.anthropic.com/en/docs/claude-code).
 
-## The Problem with Automated Scanners
+Here's the thing about security scanners: they're terrible. They pattern-match `api_key = "..."` and flag it even when it's a comment, a test placeholder, or literally a detection pattern inside another security tool. You get 500 findings, 499 of them are garbage, and by finding 12 you've stopped reading.
 
-Traditional security scanners pattern-match without understanding context. They see `api_key = "..."` and flag it, even if it's:
-- In a comment explaining what NOT to do
-- A test placeholder value
-- A detection pattern in a security tool
+Bridge is different. It gives Claude deep knowledge of what to look for across 23 security categories, but it **requires evidence for every single claim**. No file read? Not a finding. Can't quote the exact line? Not a finding. Didn't check if there's sanitization two lines above? Not a finding.
 
-Result: 500 findings, 499 false positives. Alert fatigue. Real issues get missed.
+The result: you get a report where everything in it is real.
 
-## How Bridge is Different
+## Install
 
-Bridge gives Claude the security knowledge (what patterns to look for) but requires evidence for every claim:
-
-1. **Must read actual files** - No finding without calling Read/Grep first
-2. **Must quote exact code** - Show the vulnerable line with file:line reference
-3. **Must check context** - Is this test code? Is there sanitization nearby?
-4. **Must verify claims** - If the code doesn't match, retract the finding
-
-## What it Checks
-
-### 23 Security Categories
-
-**Core Security**
-1. **SQL Injection** - String concatenation in queries
-2. **XSS** - Unsafe HTML rendering
-3. **Hardcoded Secrets** - API keys, passwords in code
-4. **Authentication** - Missing auth, weak JWT, insecure sessions
-5. **SSRF** - User-controlled URLs in fetch/request
-6. **Rate Limiting** - Unprotected auth endpoints
-7. **CORS** - Misconfigured cross-origin settings
-8. **Cryptography** - Weak hashing, predictable random
-9. **Dangerous Patterns** - Code evaluation, command injection
-10. **Cloud Security** - AWS/GCP/Azure misconfigurations
-11. **Data Exposure** - Secrets in logs, verbose errors
-
-**Modern Stack Security**
-12. **Supabase** - Missing RLS, service role key exposure, wide-open policies
-13. **Stripe** - Secret key exposure, missing webhook signature verification
-14. **Auth Providers** - Clerk, Auth0, NextAuth secret exposure, missing middleware
-15. **AI APIs** - OpenAI/Anthropic key exposure, prompt injection, missing rate limits
-16. **Email Services** - Resend, SendGrid, Postmark key exposure, spam relay prevention
-17. **Database** - Prisma/Drizzle raw query injection, connection string exposure
-18. **Redis/Upstash** - Token exposure, unencrypted sensitive data in cache
-19. **Twilio** - Auth token exposure, SMS pumping prevention, webhook verification
-
-**Compliance**
-20. **HIPAA** - PHI exposure in logs, unencrypted health data, missing audit trails
-21. **SOC 2** - Missing audit logs, weak passwords, no MFA on admin routes
-22. **PCI-DSS** - Card data in logs, raw PAN storage, CVV retention, weak TLS
-23. **GDPR** - Missing consent, no data deletion/export endpoints, excessive data collection
-
-## Installation
+### From the Marketplace (recommended)
 
 In Claude Code, run:
 
 ```
-/plugin marketplace add naieum/SecuritySuite
-/plugin install bridge@naieum-SecuritySuite
+/install-plugin naieum/Bridge
 ```
 
-Then restart Claude Code.
+That's it. Restart Claude Code and you're good.
 
-> **Note:** If updating from a previous version, uninstall first with `/plugin uninstall bridge@naieum-SecuritySuite`, then reinstall.
+### Manual Install
+
+If you want to pin a version or just prefer doing things yourself:
+
+```bash
+# Clone it wherever you keep your plugins
+git clone https://github.com/naieum/Bridge.git
+
+# In Claude Code, install from the local path
+/install-plugin /path/to/Bridge
+```
 
 ## Usage
 
@@ -72,38 +38,73 @@ Then restart Claude Code.
 /securitybridge
 ```
 
-You'll see an interactive menu with options:
-- **Quick Scan** - Smart detection selects relevant categories
-- **Web Security** - SQLi, XSS, CORS, SSRF, dangerous patterns
-- **Secrets & Auth** - Hardcoded secrets, authentication, rate limiting
-- **Modern Stack** - Stripe, auth providers, AI APIs, email, database, etc.
-- **Compliance** - HIPAA, SOC 2, PCI-DSS, GDPR
-- **Full System** - All 23 categories
-- **Custom Selection** - Pick by number or name
-- **Scan Changed Files** - Git diff mode
+You'll get an interactive menu:
 
-**Quick Scan** uses smart detection to scan only relevant categories based on your tech stack. **Custom Selection** lets you pick categories by number or name (e.g., "1 3 5" or "sql injection secrets auth").
-
-**Command Line Options:** You can also use arguments to bypass the menu:
-
-```bash
-/securitybridge --categories=1,2,3,13    # Scan specific categories
-/securitybridge --diff                   # Scan only changed files
+```
+[1] Quick Scan          - Auto-detects your stack, picks relevant checks
+[2] Web Security        - SQLi, XSS, CORS, SSRF, dangerous patterns
+[3] Secrets & Auth      - Hardcoded keys, auth issues, rate limiting
+[4] Modern Stack        - Stripe, Supabase, OpenAI, Resend, Twilio, etc.
+[5] Compliance          - HIPAA, SOC 2, PCI-DSS, GDPR
+[6] Full System         - All 23 categories (thorough but uses more tokens)
+[7] Custom Selection    - Pick specific categories by number or name
+[8] Changed Files Only  - Git diff mode, great for pre-commit
 ```
 
-After selecting, Claude will:
-1. Search for security patterns in selected categories
-2. Read the actual code to verify findings
-3. Check context (test file? sanitization? environment guards?)
-4. Report only confirmed issues with evidence
+**Quick Scan** is what you want 90% of the time. It reads your `package.json`, figures out you're using Prisma and Stripe and Resend, and only scans the categories that matter. No wasted tokens checking for Twilio issues in a project that doesn't use Twilio.
 
-## Output Format
+You can also skip the menu entirely:
 
-Every finding includes:
-- **File and line number** - Exact location
-- **Code snippet** - The actual vulnerable code
-- **Why it's vulnerable** - Context explanation
-- **How to fix** - Specific remediation
+```
+/securitybridge --categories=1,2,3,13
+/securitybridge --diff
+```
+
+### After the Scan
+
+Once Bridge finishes, it'll ask you what to do next:
+
+- **Run another scan** - go back to the menu, audit more categories
+- **Fix one by one** - walk through each finding, approve or skip fixes individually
+- **Fix all (batch)** - apply every fix at once
+- **Done** - exit
+
+## What It Checks
+
+### 23 Categories
+
+**Core Security** - SQL Injection, XSS, Hardcoded Secrets, Authentication, SSRF, Rate Limiting, CORS, Cryptography, Dangerous Patterns, Cloud Security, Data Exposure
+
+**Modern Stack** - Supabase (RLS, service role keys), Stripe (webhook verification, key exposure), Auth Providers (Clerk/Auth0/NextAuth middleware), AI APIs (OpenAI/Anthropic key exposure, prompt injection), Email (Resend/SendGrid spam relay), Database (Prisma raw queries), Redis/Upstash (token exposure), Twilio (SMS pumping)
+
+**Compliance** - HIPAA (PHI in logs, unencrypted health data), SOC 2 (audit trails, MFA, password policy), PCI-DSS (card data storage, CVV retention), GDPR (consent, data deletion, data export)
+
+## How It Actually Works
+
+Bridge isn't just a list of regex patterns. For every category, it knows:
+
+1. **What to search for** - the grep patterns and file globs
+2. **What's actually vulnerable** - vs. what just looks scary
+3. **What context to check** - is this test code? is there validation nearby? is it server-only?
+
+Every finding in the report includes the file path, line number, exact code snippet, why it's vulnerable, and how to fix it. If Bridge can't prove it with evidence from your actual codebase, it doesn't report it.
+
+## Want to See It in Action?
+
+We built [vibeHealth](https://github.com/naieum/vibeHealth) - a deliberately vulnerable telehealth app that fails all 22 applicable security categories. It's a full Next.js 14 app with auth, payments, messaging, AI symptom checking, the works. Every page has real UI, every API route works. It just happens to be horrifically insecure on purpose.
+
+```bash
+git clone https://github.com/naieum/vibeHealth.git
+cd vibeHealth
+npm install
+npx prisma db push
+npm run db:seed
+npm run dev
+```
+
+Then open Claude Code in the vibeHealth directory and run `/securitybridge`. Watch it find everything.
+
+It's a good way to see what Bridge reports look like before running it on your actual codebase.
 
 ## License
 
