@@ -49,11 +49,23 @@ Clone it, copy the skill to your global skills directory. If you'd rather scope 
 Then run `/snitch` in any project. Same skill, same 23 categories, same evidence-based approach regardless of which CLI you're using.
 
 <details>
-<summary>Updating / Uninstalling (Claude Code)</summary>
+<summary>Updating / Uninstalling</summary>
 
+**Claude Code:**
 ```
 /plugin marketplace update naieum-Snitch
 /plugin uninstall snitch@naieum-Snitch
+```
+
+**Gemini CLI:**
+```bash
+gemini extensions update snitch
+gemini extensions uninstall snitch
+```
+
+**Codex CLI:**
+```bash
+rm -rf ~/.codex/skills/snitch
 ```
 
 </details>
