@@ -98,10 +98,17 @@ Example secret redaction:
 
 When the skill is invoked with NO arguments:
 
-- **If the environment supports `AskUserQuestion`** (Claude Code, Gemini CLI, or any tool with interactive UI prompts), use the structured question flow below — it produces native buttons/selectable options inside the tool's UI.
-- **Otherwise**, display the text menu fallback.
+**MANDATORY: Before outputting any text — before reading any files — your very first tool call
+MUST be `AskUserQuestion`.** Do not print a menu, do not greet the user, do not describe what
+you are about to do. Call the tool immediately. The tool renders native UI (buttons, checkboxes)
+inside Claude Code — this is what replaces the text menu.
+
+Only fall back to the text menu below if the `AskUserQuestion` tool call itself returns a
+hard error.
 
 ### Interactive Menu (AskUserQuestion Flow)
+
+**Call `AskUserQuestion` now — do not output anything first.**
 
 Three sequential `AskUserQuestion` calls. Each shows checkboxes for a slice of the 33 categories. Accumulate all checked items across all three calls, then run the union.
 
@@ -200,7 +207,10 @@ After all three calls (or fewer if Quick/Full shortcut used):
 5. **Diff scope selected** → run `git diff HEAD --name-only`; restrict scan to those files only
 6. **Other (free text)** on any question → parse as category numbers or names; add to the accumulated set
 
-### Text Menu Fallback
+### Text Menu (Error Fallback Only)
+
+**Only use this if the `AskUserQuestion` tool call returned a hard error.**
+Do not use this as a default. The native UI is always preferred.
 
 If `AskUserQuestion` is unavailable, display this menu instead:
 
@@ -602,12 +612,12 @@ Support flexible matching:
   - Parse arguments to determine categories
   - Proceed to Step 2
 
-**STEP 1: Present Interactive Menu**
+**STEP 1: Open Native Scan Menu (AskUserQuestion)**
 - If no arguments provided:
-  - Display main menu
-  - Wait for user input
-  - Parse user choice
-  - Determine which categories to scan
+  - Call `AskUserQuestion` immediately (3-page native UI flow — see Interactive Menu above)
+  - Do NOT output any text before this call
+  - Accumulate user's selections across all pages
+  - Determine which categories to scan from the accumulated set
 
 **STEP 2: Perform Scan**
 - For EACH selected security category:
@@ -624,20 +634,17 @@ Support flexible matching:
 - **SCOPE RULE:** The report (including Passed Checks and any summary sections) must ONLY reference the selected categories. Do not list passed checks for categories that were not scanned.
 
 **STEP 4: Post-Scan Actions**
-- After displaying the report, present the user with next steps using AskUserQuestion:
 
-```
-Scan complete. What would you like to do next?
-```
+After displaying the full report, call `AskUserQuestion` with a single question:
 
-Present these options:
-
-| Option | Label | Description |
-|--------|-------|-------------|
-| 1 | Run another scan | Return to the scan selection menu to audit additional categories |
-| 2 | Fix issues one by one | Walk through each finding individually, applying fixes with your approval |
-| 3 | Fix all issues (batch) | Apply fixes for all findings at once, then review the changes |
-| 4 | Done | Exit the security audit |
+- **question:** "Scan complete. What would you like to do?"
+- **header:** "Next Steps"
+- **multiSelect:** false
+- **options:**
+  1. **Run another scan** — return to the scan menu and audit additional categories
+  2. **Fix one by one** — walk through each finding; apply fixes with your approval
+  3. **Fix all (batch)** — apply all fixes at once, then review the changes
+  4. **Done** — exit the security audit
 
 #### Post-Scan Option Behavior
 
