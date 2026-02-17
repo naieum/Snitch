@@ -97,7 +97,113 @@ Example secret redaction:
 
 ## INTERACTIVE SCAN SELECTION
 
-When the skill is invoked with NO arguments, present this menu to the user:
+When the skill is invoked with NO arguments:
+
+- **If the environment supports `AskUserQuestion`** (Claude Code, Gemini CLI, or any tool with interactive UI prompts), use the structured question flow below — it produces native buttons/selectable options inside the tool's UI.
+- **Otherwise**, display the text menu fallback.
+
+### Interactive Menu (AskUserQuestion Flow)
+
+Three sequential `AskUserQuestion` calls. Each shows checkboxes for a slice of the 33 categories. Accumulate all checked items across all three calls, then run the union.
+
+---
+
+#### Call 1 of 3 — Core Security (Cats 1–12) + Scan Mode
+
+Call `AskUserQuestion` with 4 questions:
+
+**Q1** `multiSelect: true` | header: `"Core Sec A"`
+- **SQL Injection** (Cat 1) — raw queries, string concatenation in SQL
+- **Cross-Site Scripting / XSS** (Cat 2) — unsafe DOM writes, dangerouslySetInnerHTML
+- **Hardcoded Secrets** (Cat 3) — API keys, passwords, tokens in source
+- **Authentication Issues** (Cat 4) — JWT weaknesses, open redirects, unauth WebSockets
+
+**Q2** `multiSelect: true` | header: `"Core Sec B"`
+- **SSRF** (Cat 5) — user-controlled URLs in server-side fetch calls
+- **Supabase Security** (Cat 6) — RLS policies, service role key exposure
+- **Rate Limiting** (Cat 7) — missing limits on auth/sensitive endpoints
+- **CORS Configuration** (Cat 8) — wildcard origins with credentials
+
+**Q3** `multiSelect: true` | header: `"Core Sec C"`
+- **Cryptography** (Cat 9) — weak hashes, Math.random for tokens, hardcoded keys
+- **Dangerous Code Patterns** (Cat 10) — eval, shell exec, unsafe deserialization, GraphQL introspection
+- **Cloud Security** (Cat 11) — IAM wildcards, exposed credentials, open security groups
+- **Logging & Data Exposure** (Cat 12) — sensitive data in logs, stack traces to clients
+
+**Q4** `multiSelect: false` | header: `"Scan Mode"`
+- **Continue →** pick more categories in the next two steps
+- **Quick Scan** auto-detect 5–10 categories from your tech stack, then stop
+- **Full System Scan** all 33 categories, skip remaining steps
+
+> If Q4 = **Quick Scan**: run smart detection + any Q1–Q3 boxes already checked; stop here.
+> If Q4 = **Full System Scan**: run all 33; stop here.
+> If Q4 = **Continue →**: proceed to Call 2 with Q1–Q3 selections accumulated.
+
+---
+
+#### Call 2 of 3 — Modern Stack + Compliance + Performance (Cats 13–26)
+
+Call `AskUserQuestion` with 4 questions:
+
+**Q1** `multiSelect: true` | header: `"Modern Stack A"`
+- **Stripe Security** (Cat 13) — secret key exposure, missing webhook signature verification
+- **Auth Providers** (Cat 14) — Clerk, Auth0, NextAuth misconfiguration
+- **AI API Security** (Cat 15) — key exposure, prompt injection, missing rate limits
+- **Email Services** (Cat 16) — Resend/SendGrid key exposure, spam relay, missing rate limits
+
+**Q2** `multiSelect: true` | header: `"Modern Stack B"`
+- **Database Security** (Cat 17) — raw SQL with user input, connection string exposure
+- **Redis / Cache Security** (Cat 18) — credential exposure, unencrypted sensitive data
+- **SMS / Communication** (Cat 19) — Twilio token exposure, missing webhook validation
+- **HIPAA** (Cat 20) — PHI in logs/URLs, missing encryption, no audit trail
+
+**Q3** `multiSelect: true` | header: `"Compliance"`
+- **SOC 2** (Cat 21) — missing audit logs, weak passwords, session timeout gaps
+- **PCI-DSS** (Cat 22) — raw card data, CVV storage, weak TLS
+- **GDPR** (Cat 23) — missing data deletion/export, no consent verification
+- **Memory Leaks** (Cat 24) — uncleared listeners, timers, unbounded caches
+
+**Q4** `multiSelect: true` | header: `"Performance"`
+- **N+1 Queries** (Cat 25) — ORM calls inside loops, missing eager loading
+- **Performance Problems** (Cat 26) — sync file I/O in handlers, unbounded queries, full lodash imports
+
+---
+
+#### Call 3 of 3 — Infrastructure & Supply Chain (Cats 27–33) + Scope
+
+Call `AskUserQuestion` with 3 questions:
+
+**Q1** `multiSelect: true` | header: `"Infra A"`
+- **Dependency Vulnerabilities** (Cat 27) — runs `npm audit`; CVE/0-day check on all deps
+- **Authorization & IDOR** (Cat 28) — missing ownership checks, ORM mass assignment
+- **File Upload Security** (Cat 29) — no type validation, user-controlled filenames
+- **Input Validation & ReDoS** (Cat 30) — path traversal, prototype pollution, catastrophic regex
+
+**Q2** `multiSelect: true` | header: `"Infra B"`
+- **CI/CD Pipeline Security** (Cat 31) — hardcoded secrets in workflows, expression injection
+- **Security Headers** (Cat 32) — missing CSP, HSTS, X-Frame-Options, nosniff
+- **Unused Dependencies & Bloat** (Cat 33) — unimported packages, deprecated libs, bloated deps
+
+**Q3** `multiSelect: false` | header: `"Scope"`
+- **Entire codebase** scan all source files (Recommended)
+- **Changed files only** restrict to files modified since last commit (`git diff HEAD --name-only`)
+
+---
+
+#### AskUserQuestion Behavior Rules
+
+After all three calls (or fewer if Quick/Full shortcut used):
+
+1. **Accumulate** all checked categories from every question across all calls into a single set
+2. **Full System Scan shortcut** → overrides accumulated set; scan all 33
+3. **Quick Scan shortcut** → run smart detection + merge any manually checked cats
+4. **Nothing checked** after Call 3 → display: "Please select at least one category." Re-present Call 1
+5. **Diff scope selected** → run `git diff HEAD --name-only`; restrict scan to those files only
+6. **Other (free text)** on any question → parse as category numbers or names; add to the accumulated set
+
+### Text Menu Fallback
+
+If `AskUserQuestion` is unavailable, display this menu instead:
 
 ```
 ╔════════════════════════════════════════════════════════════════════╗
@@ -156,7 +262,9 @@ When the skill is invoked with NO arguments, present this menu to the user:
 ╚════════════════════════════════════════════════════════════════════╝
 ```
 
-### Menu Behavior Rules
+### Text Menu Behavior Rules
+
+*(These apply when `AskUserQuestion` is unavailable and the text fallback menu is shown.)*
 
 #### If User Enters 0 (Exit)
 - Display: "Security audit cancelled. No changes made."
