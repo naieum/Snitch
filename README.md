@@ -177,7 +177,7 @@ Every finding in the report includes the file path, line number, exact code snip
 
 ## Want to See It in Action?
 
-We built [vibeHealth](https://github.com/naieum/vibeHealth) - a deliberately vulnerable telehealth app that fails all 22 applicable security categories. It's a full Next.js 14 app with auth, payments, messaging, AI symptom checking, the works. Every page has real UI, every API route works. It just happens to be horrifically insecure on purpose.
+We built [vibeHealth](https://github.com/naieum/vibeHealth) - a deliberately vulnerable telehealth app that fails all 31 applicable security categories. It's a full Next.js 14 app with auth, payments, messaging, AI symptom checking, the works. Every page has real UI, every API route works. It just happens to be horrifically insecure on purpose.
 
 ```bash
 git clone https://github.com/naieum/vibeHealth.git

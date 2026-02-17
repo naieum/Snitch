@@ -7,8 +7,8 @@
   "plugins": [
     {
       "name": "snitch",
-      "description": "Security Audit Plugin - Evidence-based security scanning with anti-hallucination rules, interactive scan selection, and performance analysis. 32 categories including HIPAA, SOC 2, PCI-DSS, and GDPR compliance.",
-      "version": "3.0.0",
+      "description": "Security Audit Plugin - Evidence-based security scanning with anti-hallucination rules, interactive scan selection, and performance analysis. 33 categories including HIPAA, SOC 2, PCI-DSS, GDPR compliance, CVE/0-day auditing, and unused dependency detection.",
+      "version": "4.0.0",
       "source": "./",
       "author": {
         "name": "Khuur"

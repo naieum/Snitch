@@ -54,6 +54,15 @@ These rules prevent false claims. Violating them invalidates your audit.
 - This prevents audit reports from being blocked by security hooks that scan written content for dangerous substrings
 - You MAY quote surrounding context that does not contain the triggering pattern
 
+### Rule 7: Never Auto-Fix — Report First, Fix Only on Explicit Request
+- NEVER edit, patch, or modify any file during the scan or while generating the report
+- NEVER apply any fix — even an obvious one — before the complete report has been displayed to the user
+- ONLY offer fix options AFTER the full report is shown (STEP 4: Post-Scan Actions)
+- ONLY apply a fix when the user explicitly selects Option 2 (fix one by one) or Option 3 (fix all) AND confirms each fix individually
+- If a user says "scan and fix everything" — complete the FULL scan and report FIRST, then present the post-scan menu; never skip to fixing
+- Scanning and fixing are ALWAYS two separate phases — the scan phase is strictly read-only
+- Violating this rule means the user loses control over what changes are made to their codebase
+
 ---
 
 ## EXECUTION FLOW
@@ -102,6 +111,7 @@ When the skill is invoked with NO arguments, present this menu to the user:
 ╠════════════════════════════════════════════════════════════════════╣
 ║ [2] Web Security                                                   ║
 ║     - SQL Injection, XSS, CORS, SSRF, Dangerous Patterns          ║
+║     - Logging & Data Exposure                                      ║
 ║     - Focus on web application vulnerabilities                     ║
 ╠════════════════════════════════════════════════════════════════════╣
 ║ [3] Secrets & Authentication                                      ║
@@ -122,12 +132,13 @@ When the skill is invoked with NO arguments, present this menu to the user:
 ║     - Focus on runtime performance and efficiency                  ║
 ╠════════════════════════════════════════════════════════════════════╣
 ║ [7] Infrastructure & Supply Chain                                  ║
-║     - Dependencies, Authorization/IDOR, File Uploads              ║
-║     - Input Validation, CI/CD Security, Security Headers          ║
+║     - Dependencies (CVE/0-day audit), Authorization/IDOR          ║
+║     - File Uploads, Input Validation, CI/CD Security              ║
+║     - Security Headers, Unused Dependencies & Bloat               ║
 ║     - Focus on infrastructure and supply chain risks               ║
 ╠════════════════════════════════════════════════════════════════════╣
 ║ [8] Full System Scan                                              ║
-║     - All 32 categories                                           ║
+║     - All 33 categories                                           ║
 ║     - Comprehensive but uses more tokens                          ║
 ╠════════════════════════════════════════════════════════════════════╣
 ║ [9] Custom Selection                                              ║
@@ -190,12 +201,13 @@ When the skill is invoked with NO arguments, present this menu to the user:
 ### Category Group Mappings
 
 #### Group 2: Web Security
-Categories: 1, 2, 5, 8, 10
+Categories: 1, 2, 5, 8, 10, 12
 - SQL Injection (1)
 - Cross-Site Scripting (2)
 - SSRF (5)
 - CORS Configuration (8)
 - Dangerous Code Patterns (10)
+- Logging & Data Exposure (12)
 
 #### Group 3: Secrets & Authentication
 Categories: 3, 4, 7
@@ -229,16 +241,17 @@ Categories: 24, 25, 26
 - Performance Problems (26)
 
 #### Group 7: Infrastructure & Supply Chain
-Categories: 27, 28, 29, 30, 31, 32
+Categories: 27, 28, 29, 30, 31, 32, 33
 - Dependency Vulnerabilities (27)
 - Authorization & Access Control (28)
 - File Upload Security (29)
 - Input Validation & ReDoS (30)
 - CI/CD Pipeline Security (31)
 - Security Headers (32)
+- Unused Dependencies & Bloat (33)
 
 #### Group 8: Full System Scan
-Categories: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32
+Categories: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33
 
 ---
 
@@ -260,6 +273,7 @@ Then adds categories based on detected dependencies:
 - Category 2 (XSS) - if any frontend framework found
 - Category 3 (Hardcoded Secrets) - always
 - Category 4 (Authentication) - if any auth package found
+- Category 12 (Logging and Data Exposure) - always (any project can log sensitive data)
 
 **Conditional Adds:**
 
@@ -293,7 +307,7 @@ Found `pg`, `mysql2`, `@prisma/client`, or `drizzle-orm`:
 Found `fetch`, `axios`, `got`, or `node-fetch`:
 - Add Category 5 (SSRF)
 
-Found `express-rate-limit` or `@upstash/ratelimit`:
+Found any auth package (`jsonwebtoken`, `passport`, `next-auth`, `@clerk/nextjs`, `@auth0/nextjs-auth0`, `better-auth`, `express-session`):
 - Add Category 7 (Rate Limiting)
 
 Found `cors` package:
@@ -322,6 +336,7 @@ Found any web framework/ORM (`next`, `express`, `fastify`, `@prisma/client`, `dr
 
 **Always Add:**
 - Category 27 (Dependency Vulnerabilities) - applies to every project with a package manifest
+- Category 33 (Unused Dependencies & Bloat) - applies to every project with a package manifest
 
 Found any auth/database/API route package (`next-auth`, `@clerk/nextjs`, `@auth0/nextjs-auth0`, `@prisma/client`, `drizzle-orm`, `express`, `fastify`):
 - Add Category 28 (Authorization & Access Control / IDOR)
@@ -384,6 +399,7 @@ Infrastructure & Supply Chain
   [27] Dependencies (27)             [28] Authorization/IDOR (28)
   [29] File Uploads (29)             [30] Input Validation (30)
   [31] CI/CD Security (31)           [32] Security Headers (32)
+  [33] Unused Dependencies (33)
 
 ══════════════════════════════════════════════════════════════════════
 
@@ -465,6 +481,7 @@ Support flexible matching:
 "input" or "validation" or "redos" → 30
 "cicd" or "ci/cd" or "pipeline" or "github actions" → 31
 "headers" or "csp" or "security headers" → 32
+"unused" or "bloat" or "unused dependencies" or "dead packages" → 33
 ```
 
 ---
@@ -643,11 +660,13 @@ Present these options:
 - Test/development placeholder values
 - .env.example with dummy values
 - Security scanner pattern definitions
+- Real secrets in .env.local or .env.development that are gitignored (flag as Medium, not Critical — not committed to source)
 
 ### Context Check
 1. Is this a real secret or a placeholder?
 2. Is it in a test/example file?
 3. Is it documentation or actual code?
+4. Is the secret in a file listed in .gitignore (lower severity — not committed to git) vs. committed to source control (higher severity — already in history)?
 
 ### Files to Check
 - `.env*`, `**/*.config.*`, `**/config/**`
@@ -669,6 +688,8 @@ Present these options:
 - JWT allowing none algorithm
 - Insecure cookie settings
 - Hardcoded session secrets
+- Open redirects: `redirect()`, `res.redirect()` using `returnUrl`, `next`, `redirect_to` query params without allowlist validation
+- WebSocket connections: `wss.on('connection', (ws) => { ... })` handlers that process messages before verifying authentication
 
 ### Actually Vulnerable
 - Admin routes with no authentication middleware
@@ -676,12 +697,18 @@ Present these options:
 - Accepting none as a valid JWT algorithm
 - Cookies without secure flag in production
 - Session secrets hardcoded as simple strings
+- `redirect(req.query.returnUrl)` without validating the URL is same-origin or on an allowlist
+- `res.redirect(req.body.next)` after login with no URL validation
+- WebSocket connection handler that processes data without checking session/JWT on the initial upgrade request
 
 ### NOT Vulnerable
 - Routes with auth middleware applied
 - Public routes that should be public
 - JWT secrets loaded from environment
 - Development-only insecure settings with env checks
+- Redirect URLs validated against a same-origin check or explicit allowlist
+- Auth provider handling redirects (Clerk, Auth0 handle this internally)
+- WebSocket handlers that validate auth token from query params or headers on the `connection` event before any processing
 
 ### Context Check
 1. Is middleware applied at router level?
@@ -840,7 +867,7 @@ Present these options:
 
 ### Detection
 - Crypto libraries: `crypto`, `bcrypt`, `argon2`, `scrypt`, `jose`
-- Hashing functions: `createHash`, `md5`, `sha1`, `sha256`
+- Hashing functions: `createHash`, `md5`, `sha1` (NOT sha256 or sha512 — those are fine)
 - Encryption patterns: `createCipheriv`, `encrypt`, `decrypt`
 
 ### What to Search For
@@ -860,6 +887,7 @@ Present these options:
 - Secure random functions for tokens
 - bcrypt/argon2/scrypt for passwords
 - Keys from environment variables
+- SHA-256, SHA-384, SHA-512 in any context (these are strong hashes — not a finding)
 
 ### Context Check
 1. Is the weak hash used for password storage or non-security purposes (checksums)?
@@ -885,18 +913,25 @@ Present these options:
 - Shell command execution with user input
 - Unsafe deserialization
 - Unsafe YAML loading
+- GraphQL introspection enabled in production: `introspection: true` in Apollo/GraphQL Yoga server config (leaks full schema)
+- GraphQL server missing query depth and complexity limits (DoS vector)
 
 ### Actually Vulnerable
 - User input in code evaluation
 - Shell commands with concatenated user input
 - Deserializing untrusted data
 - YAML load without safe loader
+- Apollo Server with `introspection: true` and no NODE_ENV guard (schema fully exposed)
+- GraphQL server with no `depthLimit` or `queryComplexity` plugin (unbounded query cost)
 
 ### NOT Vulnerable
 - Build tool configurations
 - Static commands without user input
 - Safe deserialization methods
 - Vendor/node_modules code
+- `introspection: process.env.NODE_ENV !== 'production'` (disabled in prod)
+- Introspection guarded by admin-only authorization
+- Depth/complexity limits configured
 
 ### Context Check
 1. Does user input flow into the evaluated code or shell command?
@@ -1654,6 +1689,23 @@ Present these options:
 - Lock files: `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`
 - CI/CD dependency installation steps
 
+### Active Audit Step (REQUIRED)
+Run the appropriate audit command for the project's package manager. This gives authoritative CVE data — do not skip it:
+
+```
+npm audit --json          # npm
+pnpm audit --json         # pnpm
+yarn audit --json         # Yarn 1.x
+pip-audit                 # Python
+bundle audit              # Ruby
+govulncheck ./...         # Go
+```
+
+Parse the output and report:
+- **Critical/High severity advisories** — flag immediately, include CVE ID and affected version range
+- **Moderate severity** — flag if the package is in `dependencies` (production)
+- **Low severity in devDependencies** — note but mark as lower priority
+
 ### What to Search For
 - Missing lockfile entirely (non-deterministic installs)
 - `postinstall` scripts in dependencies doing suspicious things (network calls, file writes outside package)
@@ -1661,6 +1713,15 @@ Present these options:
 - Pinned to very old major versions of security-critical packages (e.g., `express` v3, `jsonwebtoken` v7)
 - Dependencies with known CVEs in the locked version
 - `npm audit` / `yarn audit` equivalent checks not present in CI
+- Recently-disclosed 0-days in commonly-used packages — pay particular attention to:
+  - React / react-dom (XSS issues in certain render paths)
+  - Next.js (path traversal, SSRF, and auth bypass CVEs in older versions)
+  - Express (prototype pollution, RegEx DoS in old versions)
+  - `jsonwebtoken` (algorithm confusion, none-algorithm bypass in v8 and below)
+  - `lodash` (prototype pollution — CVE-2019-10744 and related)
+  - `node-fetch` / `axios` (SSRF and header injection in older versions)
+  - `multer` / `formidable` (path traversal in older versions)
+  - Any package pinned to a version released more than 2 major versions ago
 
 ### Actually Vulnerable
 - No lockfile committed (anyone running install gets potentially different versions)
@@ -1668,6 +1729,8 @@ Present these options:
 - Package name one character off from a popular package (potential typosquat)
 - Security-critical package pinned to end-of-life major version
 - Known CVE in locked dependency version with no override or resolution
+- `npm audit` returns Critical or High advisories for production dependencies
+- Package version falls within a known vulnerable range for a disclosed CVE
 
 ### NOT Vulnerable
 - Lock file present and committed
@@ -1675,12 +1738,14 @@ Present these options:
 - Well-known packages from verified publishers
 - Packages on current or recent major versions
 - Vulnerabilities only in devDependencies not shipped to production
+- `npm audit` returns zero Critical/High findings
 
 ### Context Check
 1. Is the lockfile committed to the repository?
 2. Are suspicious postinstall scripts from trusted, well-known packages?
 3. Is the outdated package a dev-only dependency or shipped to production?
 4. Does the project have automated dependency auditing in CI?
+5. Does `npm audit` show any Critical or High advisories? Report the CVE ID and affected package.
 
 ### Files to Check
 - `package.json`, `package-lock.json`, `yarn.lock`, `pnpm-lock.yaml`
@@ -1703,6 +1768,7 @@ Present these options:
 - Sequential/predictable IDs used for resource access without auth checks
 - `findUnique({ where: { id } })` without ownership filter (e.g., no `userId` in where clause)
 - Missing authorization middleware (distinct from authentication)
+- ORM mass assignment: `prisma.*.update({ data: req.body })` or `Model.create(req.body)` without explicit field picking
 
 ### Actually Vulnerable
 - `GET /api/users/:id` returning any user's data without checking if requester owns that resource
@@ -1710,19 +1776,24 @@ Present these options:
 - Admin route (`/api/admin/*`) with no role check middleware
 - `prisma.order.findUnique({ where: { id: params.id } })` without `userId` filter
 - Endpoints using sequential integer IDs with no authorization check
+- `prisma.user.update({ where: { id }, data: req.body })` — attacker can set `isAdmin: true`, `role: "admin"`, etc.
+- `User.create(req.body)` or `.update(req.body)` in any ORM without allow-listing specific fields
 
 ### NOT Vulnerable
 - Routes with ownership verification (`where: { id, userId: session.userId }`)
 - Admin routes protected by role-checking middleware
 - Public resources intentionally accessible to all (e.g., published blog posts)
-- Routes using UUIDs combined with proper authentication
+- Routes using proper ownership verification (e.g., `where: { id, userId: session.userId }`) — UUID vs integer ID does NOT matter; ownership check is what counts
 - Resources scoped by tenant/organization with middleware enforcement
+- Explicit field destructuring before ORM call: `const { name, email } = req.body` then using only those fields
+- Using a Zod/Yup/Joi schema that strips unknown fields before the ORM call
 
 ### Context Check
 1. Does the route verify the authenticated user owns or has access to the requested resource?
 2. Is there authorization middleware applied at the router level?
 3. Are these intentionally public endpoints?
 4. Is there a tenant/org scoping mechanism in place?
+5. Are IDs UUIDs? Note: UUID format alone does NOT prevent IDOR. Ownership verification is still required.
 
 ### Files to Check
 - `**/api/**/*.ts`, `**/routes/**/*.ts`
@@ -1910,6 +1981,66 @@ Present these options:
 
 ---
 
+## CATEGORY 33: Unused Dependencies & Package Bloat
+
+### Detection
+- `package.json` with `dependencies` and `devDependencies` sections
+- Source files across the project that import or require packages
+
+### Active Check Step
+For each package listed under `dependencies` (not devDependencies), grep the entire codebase for any import or require of that package:
+
+```
+import ... from 'package-name'
+require('package-name')
+import('package-name')
+```
+
+If zero hits are found in source files (excluding `node_modules/`), the package is a candidate for removal.
+
+### What to Search For
+- Packages in `dependencies` with no corresponding import/require in any source file
+- Large packages with lightweight alternatives:
+  - `moment` (330KB) → `date-fns`, `dayjs`, or native `Intl.DateTimeFormat`
+  - `lodash` → individual `lodash/function` imports or native JS equivalents
+  - `request` (deprecated) → `fetch` (built into Node 18+) or `axios`
+  - `node-fetch` → native `fetch` (Node 18+ has it built in)
+  - `bluebird` → native `Promise`
+- Duplicate functionality packages (e.g., both `axios` AND `node-fetch` installed)
+- Build/dev tools listed under `dependencies` instead of `devDependencies`:
+  - `eslint`, `prettier`, `typescript`, `jest`, `vitest`, `webpack`, `vite`, `esbuild`
+  - `@types/*` packages (always devDependencies)
+  - Linting configs, test frameworks, build plugins
+
+### Actually Vulnerable (Flag These)
+- Package in `dependencies` with zero import hits in any source file
+- `moment` used for simple date formatting when native `Intl` would work
+- `lodash` imported as the full library (`import _ from 'lodash'`) and only 1-2 functions used
+- Deprecated packages (`request`, `node-fetch` on Node 18+, `unirest`)
+- `devDependencies` correctly named tools accidentally placed under `dependencies`
+- Both `axios` and `node-fetch` (or similar) installed — pick one
+
+### NOT Vulnerable
+- Packages legitimately imported somewhere in source code
+- `devDependencies` that are build tools correctly placed
+- Packages used only in config files (e.g., `tailwindcss` required by `tailwind.config.js`)
+- Packages that are peer dependencies of other installed packages (transitively required)
+- Packages used in scripts (e.g., `dotenv` loaded via `node -r dotenv/config`)
+
+### Context Check
+1. Search for `import` AND `require` of the package name across all non-node_modules source files
+2. Check config files — some packages are loaded there, not in src
+3. Is the package a CLI tool invoked in npm scripts (not imported in code)?
+4. Is it a peer dependency required by another installed package?
+5. Is `devDependencies` placement correct vs `dependencies`?
+
+### Files to Check
+- `package.json` (scan every entry under `dependencies`)
+- `**/src/**/*.{ts,tsx,js,jsx}`, `**/app/**/*.{ts,tsx}`, `**/pages/**/*.{ts,tsx}`
+- Config files: `tailwind.config.*`, `next.config.*`, `jest.config.*`, `vite.config.*`
+
+---
+
 ## FINAL REPORT FORMAT
 
 ```markdown
@@ -1947,6 +2078,7 @@ Present these options:
 - [ ] Input validation with schema library (Category 30 - Input Validation)
 - [ ] CI/CD secrets use proper references (Category 31 - CI/CD Security)
 - [ ] Security headers configured (Category 32 - Security Headers)
+- [ ] No unused or bloated dependencies found (Category 33 - Unused Dependencies)
 ```
 
 **IMPORTANT:** When reporting findings involving secrets, ALWAYS redact the actual values:
@@ -1967,5 +2099,7 @@ Present these options:
 7. **Server vs Client matters.** Secrets in server-only code are often fine.
 8. **Redact all secrets.** Replace actual values with X's in all output.
 9. **Stay in scope.** Only report on selected categories. No findings, passed checks, or bright spots for unselected categories.
+10. **Never auto-fix.** Scan phase is strictly read-only. Generate the complete report first. Only touch files after the report is displayed and the user explicitly chooses a fix option and confirms it.
+11. **Run npm audit.** For Category 27, always run the package manager's audit command to get authoritative CVE data — don't guess from version numbers alone.
 
 $ARGUMENTS
