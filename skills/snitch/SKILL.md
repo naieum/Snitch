@@ -110,7 +110,7 @@ hard error.
 
 **Call `AskUserQuestion` now — do not output anything first.**
 
-Three sequential `AskUserQuestion` calls. Each shows checkboxes for a slice of the 33 categories. Accumulate all checked items across all three calls, then run the union.
+Three sequential `AskUserQuestion` calls. Each shows checkboxes for a slice of the 35 categories. Accumulate all checked items across all three calls, then run the union.
 
 ---
 
@@ -139,10 +139,10 @@ Call `AskUserQuestion` with 4 questions:
 **Q4** `multiSelect: false` | header: `"Scan Mode"`
 - **Continue →** pick more categories in the next two steps
 - **Quick Scan** auto-detect 5–10 categories from your tech stack, then stop
-- **Full System Scan** all 33 categories, skip remaining steps
+- **Full System Scan** all 35 categories, skip remaining steps
 
 > If Q4 = **Quick Scan**: run smart detection + any Q1–Q3 boxes already checked; stop here.
-> If Q4 = **Full System Scan**: run all 33; stop here.
+> If Q4 = **Full System Scan**: run all 35; stop here.
 > If Q4 = **Continue →**: proceed to Call 2 with Q1–Q3 selections accumulated.
 
 ---
@@ -175,7 +175,7 @@ Call `AskUserQuestion` with 4 questions:
 
 ---
 
-#### Call 3 of 3 — Infrastructure & Supply Chain (Cats 27–33) + Scope
+#### Call 3 of 3 — Infrastructure & Supply Chain (Cats 27–35) + Scope
 
 Call `AskUserQuestion` with 3 questions:
 
@@ -189,6 +189,8 @@ Call `AskUserQuestion` with 3 questions:
 - **🔧 CI/CD Pipeline Security** (Cat 31) — hardcoded secrets in workflows, expression injection
 - **🛡️ Security Headers** (Cat 32) — missing CSP, HSTS, X-Frame-Options, nosniff
 - **🧹 Unused Dependencies & Bloat** (Cat 33) — unimported packages, deprecated libs, bloated deps
+- **🔏 FIPS 140-3 / Crypto Compliance** (Cat 34) — non-FIPS algorithms, weak TLS, key size violations
+- **🏛️ Governance Certifications** (Cat 35) — ISO 27001, FedRAMP, CMMC, CSA STAR control gaps
 
 **Q3** `multiSelect: false` | header: `"Scope"`
 - **Entire codebase** scan all source files (Recommended)
@@ -201,7 +203,7 @@ Call `AskUserQuestion` with 3 questions:
 After all three calls (or fewer if Quick/Full shortcut used):
 
 1. **Accumulate** all checked categories from every question across all calls into a single set
-2. **Full System Scan shortcut** → overrides accumulated set; scan all 33
+2. **Full System Scan shortcut** → overrides accumulated set; scan all 35
 3. **Quick Scan shortcut** → run smart detection + merge any manually checked cats
 4. **Nothing checked** after Call 3 → display: "Please select at least one category." Re-present Call 1
 5. **Diff scope selected** → run `git diff HEAD --name-only`; restrict scan to those files only
@@ -254,7 +256,7 @@ If `AskUserQuestion` is unavailable, display this menu instead:
 ║     - Focus on infrastructure and supply chain risks               ║
 ╠════════════════════════════════════════════════════════════════════╣
 ║ [8] Full System Scan                                              ║
-║     - All 33 categories                                           ║
+║     - All 35 categories                                           ║
 ║     - Comprehensive but uses more tokens                          ║
 ╠════════════════════════════════════════════════════════════════════╣
 ║ [9] Custom Selection                                              ║
@@ -346,11 +348,13 @@ Categories: 6, 11, 13, 14, 15, 16, 17, 18, 19
 - SMS/Communication (19)
 
 #### Group 5: Compliance
-Categories: 20, 21, 22, 23
+Categories: 20, 21, 22, 23, 34, 35
 - HIPAA (20)
 - SOC 2 (21)
 - PCI-DSS (22)
 - GDPR (23)
+- FIPS 140-3 / Cryptographic Compliance (34)
+- Security Governance Certifications (35)
 
 #### Group 6: Performance
 Categories: 24, 25, 26
@@ -368,8 +372,8 @@ Categories: 27, 28, 29, 30, 31, 32, 33
 - Security Headers (32)
 - Unused Dependencies & Bloat (33)
 
-#### Group 8: Full System Scan
-Categories: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33
+#### Group 8: Full System Scan (35 categories)
+Categories: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35
 
 ---
 
@@ -443,6 +447,12 @@ Found Keywords: `card`, `payment`, `stripe`, `cvv`, `pan`:
 Found Keywords: `consent`, `gdpr`, `data-export`, `data-delete`:
 - Add Category 23 (GDPR)
 
+Found Keywords: `fips`, `fips140`, `nist`, `cipher`, `tls_min`, `openssl`:
+- Add Category 34 (FIPS / Cryptographic Compliance)
+
+Found Keywords: `iso27001`, `fedramp`, `cmmc`, `govcloud`, `cui`, `nist800`, `ato`:
+- Add Category 35 (Governance Certifications)
+
 Found any React/Vue/Angular framework or any database package (`@prisma/client`, `drizzle-orm`, `pg`, `mysql2`, `mongoose`):
 - Add Category 24 (Memory Leaks)
 
@@ -508,6 +518,7 @@ Modern Stack
 Compliance
   [20] HIPAA (20)                    [21] SOC 2 (21)
   [22] PCI-DSS (22)                  [23] GDPR (23)
+  [34] FIPS 140-3 (34)               [35] Gov Certifications (35)
 
 Performance
   [24] Memory Leaks (24)             [25] N+1 Queries (25)
@@ -538,7 +549,7 @@ Your selection:
 - For each item, check if it's a number or name
 - Map names to category numbers (case-insensitive, partial match)
 - Remove duplicates
-- Validate all categories are in range 1-32
+- Validate all categories are in range 1-35
 
 **Examples:**
 
@@ -559,7 +570,7 @@ Input: `"1 1 3 3"`
 
 Input: `"99 xyz"`
 → Invalid categories detected
-→ Display: "Invalid categories: 99, xyz. Please enter 1-32 or valid names."
+→ Display: "Invalid categories: 99, xyz. Please enter 1-35 or valid names."
 → Re-display menu
 
 #### Name to Category Mapping
@@ -600,6 +611,8 @@ Support flexible matching:
 "cicd" or "ci/cd" or "pipeline" or "github actions" → 31
 "headers" or "csp" or "security headers" → 32
 "unused" or "bloat" or "unused dependencies" or "dead packages" → 33
+"fips" or "fips140" or "fips 140" or "cryptographic compliance" → 34
+"iso" or "iso27001" or "fedramp" or "cmmc" or "governance" or "nist" → 35
 ```
 
 ---
@@ -2156,6 +2169,115 @@ If zero hits are found in source files (excluding `node_modules/`), the package 
 
 ---
 
+## CATEGORY 34: FIPS 140-3 / Cryptographic Compliance
+
+> **Cross-reference:** Overlaps with Category 9 (Cryptography). Only flag here when there is specific FIPS compliance context (regulated environment, government contract, healthcare, finance). For general crypto weaknesses defer to Cat 9.
+
+### Detection
+- `crypto`, `node:crypto`, `openssl`, `crypto-js`, `forge`, `jose` imports
+- TLS/SSL config files, nginx/haproxy configs with cipher suite settings
+- `.env` files with `TLS_*`, `SSL_*`, `CIPHER_*` vars
+- Files containing `createCipheriv`, `createDecipheriv`, `createHash`
+
+### What to Search For
+- Hash function usage: `md5`, `sha1`, `sha-1` in security contexts (signing, auth)
+- Cipher names: `RC4`, `DES`, `3DES`, `Blowfish`, `RC2`, `IDEA`
+- TLS version strings: `TLSv1`, `TLSv1.1`, `TLSv1.0`, `SSLv3`
+- Key size parameters: RSA modulus < 2048, EC curves < 224-bit (secp192r1, prime192v1)
+- FIPS mode disabled: `crypto.setFips(false)`, `OPENSSL_NO_FIPS`, absence of `fips: true` in regulated context
+- Custom crypto: manual XOR operations, custom PRNG, seed-based random used for tokens or IVs
+
+### Critical
+- Non-FIPS symmetric cipher (RC4, DES, 3DES, Blowfish) used for data encryption
+- MD5 or SHA-1 used for digital signatures or password hashing in production
+- TLS 1.0 or 1.1 explicitly permitted in production TLS config
+- RSA key < 2048 bits generated or hardcoded
+
+### High
+- `Math.random()` used as initialization vector (IV) or for token generation
+- SHA-1 used for HMAC in authentication contexts
+- Elliptic curve < 224-bit (e.g., secp192r1)
+- FIPS mode explicitly disabled (`crypto.setFips(false)`) with no compensating control
+- `rejectUnauthorized: false` in production TLS client (not gated to dev)
+
+### Medium
+- SHA-1 used only for non-security checksums (flag with note to confirm context)
+- Cipher suites not in NIST-approved list for TLS 1.2
+
+### Context Check
+1. Is this a regulated environment (government, federal contractor, healthcare, finance)?
+2. Is the algorithm used for security (auth, signing, encryption) or just checksums/cache keys?
+3. Is `rejectUnauthorized: false` or TLS 1.0 gated to dev/test environments only?
+
+### NOT Vulnerable (False Positives)
+- MD5 used only for cache keys or non-security ETags
+- SHA-1 used only for git object IDs or non-security checksums
+- TLS 1.0/1.1 configuration in files clearly marked as test-only / local dev
+- FIPS-approved algorithms: AES-128-GCM, AES-256-GCM, SHA-256, SHA-384, SHA-512, ECDSA P-256/P-384, RSA-2048+
+
+### Files to Check
+- `**/crypto*.{ts,js}`, `**/tls*.{ts,js}`, `**/ssl*.{ts,js}`
+- `nginx.conf`, `haproxy.cfg`, `*.pem`, `.env*`
+- Any file with `createCipheriv`, `createHash`, `generateKeyPair`
+
+---
+
+## CATEGORY 35: Security Governance Certifications (ISO 27001 / FedRAMP / CMMC)
+
+> **Cross-reference:** Overlaps with Category 21 (SOC 2) for audit logs and Category 11 (Cloud Security) for IAM/cloud config. Only flag here for ISO 27001 / FedRAMP / CMMC specific gaps — not for general cloud or logging issues already covered by those categories.
+
+### Detection
+- Keywords in code/config: `iso27001`, `fedramp`, `cmmc`, `govcloud`, `cui`, `nist800`, `ato`
+- `.gov` or `.mil` domains in config/env variables
+- `us-gov-*` AWS regions, Azure Government endpoints, GovCloud references
+- DoD contract or classification comments (`// CUI`, `// FOUO`, `// CONTROLLED`)
+- SSP (System Security Plan) or POA&M references in docs
+
+### What to Search For
+- CUI handling: files processing `cui`, `controlled unclassified`, `fouo` without encryption wrapper
+- FedRAMP boundary: API calls to non-GovCloud endpoints where federal data context exists
+- Audit completeness: privileged operations (user deletion, role change, key rotation) missing audit log entries
+- Access control: admin/privileged routes missing MFA enforcement or role-based check
+- Data classification: sensitive handlers with no classification labeling
+- Incident response: no error/event hooks that could feed a SIEM or alerting system
+- CMMC Level 2: multi-factor auth not enforced for privileged accounts, no session timeout
+- ISO 27001 A.10: sensitive data stored without encryption at rest
+- ISO 27001 A.15: third-party/vendor access not documented or restricted
+
+### Critical
+- CUI data transmitted without TLS or stored unencrypted (CMMC L2 AC.2.006)
+- Federal data processed outside FedRAMP-authorized boundary (non-GovCloud endpoint)
+- No audit log on privileged operations (ISO 27001 A.12.4, CMMC AU.2.041)
+
+### High
+- Admin endpoints with no MFA enforcement (ISO 27001 A.9.4, CMMC IA.3.083)
+- Missing data retention or deletion policy for sensitive records (ISO 27001 A.8.3)
+- No incident response hook or alerting mechanism (ISO 27001 A.16, FedRAMP IR controls)
+- Session timeout not enforced for privileged sessions (CMMC AC.2.007)
+
+### Medium
+- No data classification labels on sensitive model or handler files
+- Third-party/vendor data processors not documented or access-controlled (ISO 27001 A.15)
+- Encryption-at-rest not documented for sensitive databases
+
+### Context Check
+1. Is this application under a government contract, FedRAMP ATO, or CMMC certification scope?
+2. Are CUI markers in comments indicating awareness, or actual unprotected sensitive data?
+3. Is the audit log gap in production code or test scaffolding?
+
+### NOT Vulnerable (False Positives)
+- `govcloud` string in comments discussing migration plans (not actual endpoints)
+- CUI labels in documentation/markdown files (not in code handling data)
+- Missing audit logs in test helpers or fixtures
+
+### Files to Check
+- `**/admin*.{ts,js}`, `**/privileged*.{ts,js}`
+- `.env*` files with `GOV`, `FEDERAL`, `CUI` vars
+- `**/models/*.{ts,js}` for data classification
+- `**/routes/**`, `**/api/**` for access control enforcement
+
+---
+
 ## FINAL REPORT FORMAT
 
 ```markdown
@@ -2194,6 +2316,8 @@ If zero hits are found in source files (excluding `node_modules/`), the package 
 - [ ] CI/CD secrets use proper references (Category 31 - CI/CD Security)
 - [ ] Security headers configured (Category 32 - Security Headers)
 - [ ] No unused or bloated dependencies found (Category 33 - Unused Dependencies)
+- [ ] FIPS-approved algorithms and key sizes in use (Category 34 - FIPS 140-3)
+- [ ] Governance certification controls implemented (Category 35 - ISO 27001/FedRAMP/CMMC)
 ```
 
 **IMPORTANT:** When reporting findings involving secrets, ALWAYS redact the actual values:
