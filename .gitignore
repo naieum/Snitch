@@ -7,3 +7,4 @@
 .DS_Store
 node_modules/
 SECURITY_AUDIT_REPORT.md
+.dev.vars

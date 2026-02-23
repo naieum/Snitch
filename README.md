@@ -4,21 +4,22 @@
   \__ \/  |/ // /  / / / /   / /_/ /
  ___/ / /|  // /  / / / /___/ __  /
 /____/_/ |_/___/ /_/  \____/_/ /_/
+                                v2
 ```
 
-An open source security audit skill for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Gemini CLI](https://github.com/google-gemini/gemini-cli), [Codex CLI](https://github.com/openai/codex), [OpenCode](https://github.com/opencode-ai/opencode), [Antigravity](https://github.com/neplextech/antigravity), and [Cursor](https://www.cursor.com/).
+A security audit plugin for [Claude Code](https://docs.anthropic.com/en/docs/claude-code), [Gemini CLI](https://github.com/google-gemini/gemini-cli), [Codex CLI](https://github.com/openai/codex), [OpenCode](https://github.com/opencode-ai/opencode), [Antigravity](https://github.com/neplextech/antigravity), and [Cursor](https://www.cursor.com/).
 
 ---
 
-Security scanners are cooked. Like actually broken in a way that makes your codebase *less* safe because they train you to ignore their output.
+I tell ya, security scanners get no respect. No respect at all. You run one on your codebase and it comes back with 500 findings. Five hundred! I haven't read 500 of anything in my life. My doctor sends me one page of test results and I need a nap.
 
-You get 500 findings. You read 12. By finding 8 you're skimming. By finding 20 you've closed the tab. And half of them are `api_key = "YOUR_KEY_HERE"` in a comment or a test fixture that's been there since the repo was initialized. The scanner doesn't know. It doesn't care. It found the pattern. That's its whole job.
+And the findings? Half of them are `YOUR_API_KEY_HERE` in a comment somebody wrote two years ago. The scanner sees the word "key" and loses its mind. It's like a smoke detector that goes off every time you make toast. After a while you just take the batteries out. Now your house burns down. Great system.
 
-This is fine when a human wrote all the code and roughly knows what's in it. It is *not* fine when your AI wrote 80% of it in the last three weeks and you haven't read most of it. Which is where we all are now.
+Here's the thing though — that was fine when humans wrote all the code. You knew what was in there because you put it there. But now? Your AI wrote 80% of the app in three weeks. You didn't read most of it. I didn't read most of it. Nobody read most of it. We just watched it go and said "looks good" like we were approving a restaurant check we didn't look at.
 
-Snitch is different. It gives your AI deep knowledge of what to actually look for across 32 security categories, but every single finding requires evidence. No file read, no finding. Can't quote the exact line, no finding. Didn't verify there's no sanitization two lines above it, no finding. The rule is simple: if you can't prove it with code from your actual codebase, it doesn't go in the report.
+Snitch is different. It makes your AI actually *prove* every finding with real code from your actual project. No file read? No finding. Can't quote the exact line? No finding. Didn't check if there's a fix two lines above? No finding. It's like a cop that needs a warrant. Remember those?
 
-The result is a report where everything in it is real. Your AI builds the thing, Snitch reviews the thing, you ship with confidence. The loop closes.
+The result is a report where everything in it is real. Your AI builds the app, Snitch reviews the app, you ship it without waking up at 3am wondering if your users' passwords are in a log file somewhere. They might be. But at least now you'll know.
 
 ## Install
 
@@ -29,7 +30,7 @@ The result is a report where everything in it is real. Your AI builds the thing,
 /plugin install snitch@naieum-Snitch
 ```
 
-Two commands. That's it.
+Two commands. My last relationship took more effort than that and was way less useful.
 
 ### Gemini CLI
 
@@ -44,7 +45,7 @@ git clone https://github.com/naieum/Snitch.git
 cp -r Snitch/agents/skills/snitch ~/.codex/skills/snitch
 ```
 
-Global install. If you want it scoped to one project, use `.agents/skills/snitch` instead.
+That's a global install. If you want it for just one project, use `.agents/skills/snitch` instead.
 
 ### OpenCode
 
@@ -53,7 +54,7 @@ git clone https://github.com/naieum/Snitch.git
 cp -r Snitch/skills/snitch ~/.config/opencode/skills/snitch
 ```
 
-For a single project, use `.opencode/skills/snitch`.
+Single project: `.opencode/skills/snitch`.
 
 ### Antigravity
 
@@ -118,66 +119,49 @@ rm -rf .cursor/skills/snitch
 /snitch
 ```
 
-You'll get a menu:
+That's it. You get a menu. Pick what you want to check. It's like a deli counter but instead of cold cuts you're picking which parts of your app might be leaking customer data.
 
-```
-[1] Quick Scan          - Auto-detects your stack, picks relevant checks
-[2] Web Security        - SQLi, XSS, CORS, SSRF, dangerous patterns
-[3] Secrets & Auth      - Hardcoded keys, auth issues, rate limiting
-[4] Modern Stack        - Stripe, Supabase, OpenAI, Resend, Twilio, etc.
-[5] Compliance          - HIPAA, SOC 2, PCI-DSS, GDPR
-[6] Performance         - Memory leaks, N+1 queries, performance issues
-[7] Infrastructure      - Dependencies, IDOR, file uploads, CI/CD, headers
-[8] Full System         - All 32 categories (thorough but uses more tokens)
-[9] Custom Selection    - Pick specific categories by number or name
-[10] Changed Files Only - Git diff mode, great for pre-commit
-```
+**Quick Scan** is the move. It reads your `package.json`, figures out you're using Prisma and Stripe and NextAuth, and only checks the stuff that matters. It's not going to audit your Twilio setup if you don't have a phone number anywhere in the project. Smart like that.
 
-Just use Quick Scan. Seriously. It reads your `package.json`, sees you're using Prisma and Stripe and Resend, and only runs the checks that matter for your actual stack. No wasted tokens auditing Twilio SMS pumping vectors in a project that doesn't have a phone number anywhere in it.
-
-You can also skip the menu:
+You can also skip the menu entirely:
 
 ```
 /snitch --categories=1,2,3,13
 /snitch --diff
 ```
 
-`--diff` is genuinely underrated. Run it before every commit. Takes maybe 30 seconds on a normal diff and catches the stuff that slips through when you're in flow state and merging fast.
+`--diff` is the one you want before every commit. Takes 30 seconds, catches the stuff that sneaks in when you're shipping fast and not paying attention. Which is always.
 
 ### After the Scan
 
-Snitch asks what you want to do with the findings:
+Snitch gives you options:
 
-- **Run another scan** - go back to the menu, audit more categories
-- **Fix one by one** - walk through each finding, approve or skip fixes individually
-- **Fix all (batch)** - apply everything at once
-- **Done** - exit
+- **Run another scan** — go back, check more stuff
+- **Fix one by one** — walk through each finding, say yes or no
+- **Fix all** — let it patch everything at once
+- **Done** — you're out
 
 ## What It Checks
 
-### 32 Categories
+39 categories. That's not a typo. Let me break it down so it doesn't sound like a college syllabus.
 
-**Core Security** — SQL Injection, XSS, Hardcoded Secrets, Authentication, SSRF, Rate Limiting, CORS, Cryptography, Dangerous Patterns, Cloud Security, Data Exposure
+**The Scary Stuff** — SQL injection (someone runs database commands through your app), XSS (someone puts a script on your page that steals cookies), hardcoded secrets (your API keys are just... sitting there in the code), broken login flows, your server fetching URLs it shouldn't, and nobody put rate limits on anything so bots can try a million passwords.
 
-**Modern Stack** — Supabase (RLS, service role keys), Stripe (webhook verification, key exposure), Auth Providers (Clerk/Auth0/NextAuth middleware), AI APIs (OpenAI/Anthropic key exposure, prompt injection), Email (Resend/SendGrid spam relay), Database (Prisma raw queries), Redis/Upstash (token exposure), Twilio (SMS pumping)
+**Your Services** — Supabase row-level security (is the data actually locked down or can anyone grab it?), Stripe keys and webhooks, auth providers like Clerk and Auth0 (did you actually set them up right?), AI API keys floating around, email services that could get turned into spam cannons, database connection strings in the open, Redis passwords, Twilio tokens.
 
-**Compliance** — HIPAA (PHI in logs, unencrypted health data), SOC 2 (audit trails, MFA, password policy), PCI-DSS (card data storage, CVV retention), GDPR (consent, data deletion, data export)
+**Session & Token Lifetimes** — This is the new one. Your login tokens — do they expire? Do they expire at the right time? Does logging out actually log you out, or does it just clear a cookie while the token's still good for another six hours? You'd be surprised how many apps get this wrong.
 
-**Performance** — Memory Leaks (event listeners, intervals, unbounded caches), N+1 Queries (ORM queries in loops, missing eager loading), Performance Problems (sync I/O in handlers, missing indexes, unbounded queries, full library imports)
+**Compliance** — HIPAA (patient data in your logs is a federal problem), SOC 2 (no audit trail means no audit trail), PCI-DSS (you're storing credit card numbers? in *this* economy?), GDPR (can your European users actually delete their data or is that button decorative?).
 
-**Infrastructure & Supply Chain** — Dependency Vulnerabilities (missing lockfiles, outdated packages, typosquatting), Authorization/IDOR (missing ownership checks, predictable IDs), File Upload Security (path traversal, missing validation), Input Validation/ReDoS (prototype pollution, catastrophic backtracking), CI/CD Pipeline Security (secret exposure, expression injection, unpinned actions), Security Headers (CSP, HSTS, clickjacking protection)
+**Performance** — Memory leaks (event listeners that never get cleaned up), N+1 queries (your ORM is hitting the database 200 times when it could hit it once), and code that blocks the whole server while it reads a file.
 
-## How It Actually Works
+**The Rest** — Vulnerable npm packages, users accessing each other's data, file uploads with no validation, inputs that crash your regex engine, CI/CD pipelines with secrets in plain text, missing security headers, dead dependencies making your bundle enormous, crypto compliance, governance certifications, disaster recovery, monitoring, and data lifecycle.
 
-It's not regex. For every category, Snitch knows what to grep for, what patterns are actually dangerous vs. what just looks scary, and what context to check before calling something a finding. Is this test code? Is there validation two lines above? Is this server-only or could it run client-side? It checks.
+## How It Works
 
-Every finding you get includes the file path, line number, exact code snippet, why it's vulnerable, and how to fix it. If it can't prove it with evidence from your codebase, it doesn't report it. That's the whole design.
+It's not some pattern-matching robot that sees the word "password" and panics. For every category, Snitch knows what to look for, what's actually dangerous versus what just looks suspicious, and what to check before sounding the alarm. Is this test code? Is there input validation right above it? Is this running on the server or could it end up in the browser?
 
-## See It In Action
-
-We built [vibeHealth](https://github.com/naieum/vibeHealth) — a deliberately vulnerable telehealth app that fails all 31 applicable security categories. Full Next.js 14 app with auth, payments, messaging, AI symptom checking. Every page has real UI, every API route works. It's just catastrophically insecure on purpose.
-
-Clone it, open your CLI in the directory, run `/snitch`. Watch it find everything. Good way to see what the reports look like before you run it on something you actually care about.
+Every finding comes with the file, the line number, the actual code, why it's a problem, and how to fix it. If it can't prove it, it doesn't report it. I wish my mechanic worked like that.
 
 ## License
 

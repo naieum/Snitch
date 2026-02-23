@@ -110,7 +110,7 @@ hard error.
 
 **Call `AskUserQuestion` now — do not output anything first.**
 
-Three sequential `AskUserQuestion` calls. Each shows checkboxes for a slice of the 35 categories. Accumulate all checked items across all three calls, then run the union.
+Three sequential `AskUserQuestion` calls. Each shows checkboxes for a slice of the 39 categories. Accumulate all checked items across all three calls, then run the union.
 
 ---
 
@@ -118,81 +118,87 @@ Three sequential `AskUserQuestion` calls. Each shows checkboxes for a slice of t
 
 Call `AskUserQuestion` with 4 questions:
 
-**Q1** `multiSelect: true` | header: `"Core Sec A"`
-- **💉 SQL Injection** (Cat 1) — raw queries, string concatenation in SQL
-- **🎭 Cross-Site Scripting / XSS** (Cat 2) — unsafe DOM writes, dangerouslySetInnerHTML
-- **🔑 Hardcoded Secrets** (Cat 3) — API keys, passwords, tokens in source
-- **🔐 Authentication Issues** (Cat 4) — JWT weaknesses, open redirects, unauth WebSockets
+**Q1** `multiSelect: true` | header: `"Security"`
+- **💉 SQL Injection** (Cat 1) — attackers can run database commands through your app
+- **🎭 XSS** (Cat 2) — attackers can inject scripts into pages your users see
+- **🔑 Hardcoded Secrets** (Cat 3) — API keys or passwords sitting in your source code
+- **🔐 Auth & Login** (Cat 4) — weak login security, broken sessions, open redirects
 
-**Q2** `multiSelect: true` | header: `"Core Sec B"`
-- **🌐 SSRF** (Cat 5) — user-controlled URLs in server-side fetch calls
-- **🐘 Supabase Security** (Cat 6) — RLS policies, service role key exposure
-- **🚦 Rate Limiting** (Cat 7) — missing limits on auth/sensitive endpoints
-- **🌍 CORS Configuration** (Cat 8) — wildcard origins with credentials
+**Q2** `multiSelect: true` | header: `"Networking"`
+- **🌐 SSRF** (Cat 5) — your server can be tricked into fetching internal URLs
+- **🐘 Supabase** (Cat 6) — missing row-level security, exposed service keys
+- **🚦 Rate Limiting** (Cat 7) — no limits on login attempts or sensitive endpoints
+- **🌍 CORS** (Cat 8) — other websites can make requests to your API
 
-**Q3** `multiSelect: true` | header: `"Core Sec C"`
-- **🔒 Cryptography** (Cat 9) — weak hashes, Math.random for tokens, hardcoded keys
-- **💣 Dangerous Code Patterns** (Cat 10) — eval, shell exec, unsafe deserialization, GraphQL introspection
-- **☁️ Cloud Security** (Cat 11) — IAM wildcards, exposed credentials, open security groups
-- **👁️ Logging & Data Exposure** (Cat 12) — sensitive data in logs, stack traces to clients
+**Q3** `multiSelect: true` | header: `"Code & Cloud"`
+- **🔒 Crypto** (Cat 9) — weak hashing, bad randomness, hardcoded encryption keys
+- **💣 Dangerous Patterns** (Cat 10) — risky code like dynamic evaluation or shell commands
+- **☁️ Cloud** (Cat 11) — overly permissive IAM, exposed cloud credentials
+- **👁️ Data Leaks** (Cat 12) — passwords or tokens showing up in logs or error messages
 
 **Q4** `multiSelect: false` | header: `"Scan Mode"`
-- **Continue →** pick more categories in the next two steps
-- **Quick Scan** auto-detect 5–10 categories from your tech stack, then stop
-- **Full System Scan** all 35 categories, skip remaining steps
+- **Continue →** pick more categories on the next pages
+- **Quick Scan** auto-detect what matters based on your tech stack
+- **Full System Scan** check everything (all 39 categories)
 
 > If Q4 = **Quick Scan**: run smart detection + any Q1–Q3 boxes already checked; stop here.
-> If Q4 = **Full System Scan**: run all 35; stop here.
+> If Q4 = **Full System Scan**: run all 39; stop here.
 > If Q4 = **Continue →**: proceed to Call 2 with Q1–Q3 selections accumulated.
 
 ---
 
-#### Call 2 of 3 — Modern Stack + Compliance + Performance (Cats 13–26)
+#### Call 2 of 3 — Modern Stack + Compliance + Performance (Cats 13–26, 39)
 
 Call `AskUserQuestion` with 4 questions:
 
-**Q1** `multiSelect: true` | header: `"Modern Stack A"`
-- **💳 Stripe Security** (Cat 13) — secret key exposure, missing webhook signature verification
-- **🏢 Auth Providers** (Cat 14) — Clerk, Auth0, NextAuth misconfiguration
-- **🤖 AI API Security** (Cat 15) — key exposure, prompt injection, missing rate limits
-- **📧 Email Services** (Cat 16) — Resend/SendGrid key exposure, spam relay, missing rate limits
+**Q1** `multiSelect: true` | header: `"Auth & Payments"`
+- **🏢 Auth Providers** (Cat 14) — Clerk, Auth0, or NextAuth set up wrong
+- **⏱️ Token & Session Lifetimes** (Cat 39) — sessions that expire too soon, never, or don't log out properly
+- **💳 Stripe** (Cat 13) — secret keys exposed, webhooks not verified
+- **🤖 AI APIs** (Cat 15) — API keys leaked, no rate limits on AI calls
 
-**Q2** `multiSelect: true` | header: `"Modern Stack B"`
-- **🗄️ Database Security** (Cat 17) — raw SQL with user input, connection string exposure
-- **📦 Redis / Cache Security** (Cat 18) — credential exposure, unencrypted sensitive data
-- **📱 SMS / Communication** (Cat 19) — Twilio token exposure, missing webhook validation
-- **🏥 HIPAA** (Cat 20) — PHI in logs/URLs, missing encryption, no audit trail
+**Q2** `multiSelect: true` | header: `"Data & Messaging"`
+- **🗄️ Database** (Cat 17) — connection strings exposed, raw queries with user input
+- **📦 Redis & Cache** (Cat 18) — credentials exposed, sensitive data stored unencrypted
+- **📱 SMS** (Cat 19) — Twilio tokens exposed, webhooks not validated
+- **📧 Email** (Cat 16) — SendGrid/Resend keys exposed, can be used to spam
 
 **Q3** `multiSelect: true` | header: `"Compliance"`
-- **📋 SOC 2** (Cat 21) — missing audit logs, weak passwords, session timeout gaps
-- **💰 PCI-DSS** (Cat 22) — raw card data, CVV storage, weak TLS
-- **🇪🇺 GDPR** (Cat 23) — missing data deletion/export, no consent verification
-- **💾 Memory Leaks** (Cat 24) — uncleared listeners, timers, unbounded caches
+- **🏥 HIPAA** (Cat 20) — patient data in logs, missing encryption, no audit trail
+- **📋 SOC 2** (Cat 21) — no audit logs, weak passwords, sessions that never expire
+- **💰 PCI-DSS** (Cat 22) — storing raw card numbers or CVVs, weak encryption
+- **🇪🇺 GDPR** (Cat 23) — no way to delete or export user data
 
 **Q4** `multiSelect: true` | header: `"Performance"`
-- **🔄 N+1 Queries** (Cat 25) — ORM calls inside loops, missing eager loading
-- **🐢 Performance Problems** (Cat 26) — sync file I/O in handlers, unbounded queries, full lodash imports
+- **💾 Memory Leaks** (Cat 24) — event listeners and timers that never get cleaned up
+- **🔄 N+1 Queries** (Cat 25) — database calls inside loops that should be batched
+- **🐢 Slow Code** (Cat 26) — blocking I/O, unbounded queries, heavy imports
 
 ---
 
-#### Call 3 of 3 — Infrastructure & Supply Chain (Cats 27–35) + Scope
+#### Call 3 of 3 — Infrastructure, Supply Chain & Governance (Cats 27–38) + Scope
 
-Call `AskUserQuestion` with 3 questions:
+Call `AskUserQuestion` with 4 questions:
 
-**Q1** `multiSelect: true` | header: `"Infra A"`
-- **📦 Dependency Vulnerabilities** (Cat 27) — runs `npm audit`; CVE/0-day check on all deps
-- **🔓 Authorization & IDOR** (Cat 28) — missing ownership checks, ORM mass assignment
-- **📎 File Upload Security** (Cat 29) — no type validation, user-controlled filenames
-- **🧩 Input Validation & ReDoS** (Cat 30) — path traversal, prototype pollution, catastrophic regex
+**Q1** `multiSelect: true` | header: `"Supply Chain"`
+- **📦 Dependencies** (Cat 27) — known vulnerabilities in your npm packages
+- **🔓 Authorization** (Cat 28) — users can access or edit other users' data
+- **📎 File Uploads** (Cat 29) — no file type checks, dangerous filenames
+- **🧩 Input Validation** (Cat 30) — path traversal, prototype pollution, regex denial-of-service
 
-**Q2** `multiSelect: true` | header: `"Infra B"`
-- **🔧 CI/CD Pipeline Security** (Cat 31) — hardcoded secrets in workflows, expression injection
-- **🛡️ Security Headers** (Cat 32) — missing CSP, HSTS, X-Frame-Options, nosniff
-- **🧹 Unused Dependencies & Bloat** (Cat 33) — unimported packages, deprecated libs, bloated deps
-- **🔏 FIPS 140-3 / Crypto Compliance** (Cat 34) — non-FIPS algorithms, weak TLS, key size violations
-- **🏛️ Governance Certifications** (Cat 35) — ISO 27001, FedRAMP, CMMC, CSA STAR control gaps
+**Q2** `multiSelect: true` | header: `"Infrastructure"`
+- **🔧 CI/CD Pipelines** (Cat 31) — secrets hardcoded in GitHub Actions or workflows
+- **🛡️ Security Headers** (Cat 32) — missing CSP, HSTS, or clickjacking protection
+- **🧹 Unused Packages** (Cat 33) — dead dependencies, deprecated libs, bundle bloat
+- **🔏 FIPS Crypto** (Cat 34) — non-compliant algorithms, weak TLS, small key sizes
 
-**Q3** `multiSelect: false` | header: `"Scope"`
+**Q3** `multiSelect: true` | header: `"Governance"`
+- **🏛️ Certifications** (Cat 35) — ISO 27001, FedRAMP, CMMC control gaps
+- **🔄 Disaster Recovery** (Cat 36) — no health checks, no graceful shutdown, no backups
+- **📡 Monitoring** (Cat 37) — no error tracking, no structured logging, no alerts
+- **🗂️ Data Lifecycle** (Cat 38) — no data retention policy, PII not labeled, no cleanup jobs
+
+**Q4** `multiSelect: false` | header: `"Scope"`
 - **Entire codebase** scan all source files (Recommended)
 - **Changed files only** restrict to files modified since last commit (`git diff HEAD --name-only`)
 
@@ -203,7 +209,7 @@ Call `AskUserQuestion` with 3 questions:
 After all three calls (or fewer if Quick/Full shortcut used):
 
 1. **Accumulate** all checked categories from every question across all calls into a single set
-2. **Full System Scan shortcut** → overrides accumulated set; scan all 35
+2. **Full System Scan shortcut** → overrides accumulated set; scan all 39
 3. **Quick Scan shortcut** → run smart detection + merge any manually checked cats
 4. **Nothing checked** after Call 3 → display: "Please select at least one category." Re-present Call 1
 5. **Diff scope selected** → run `git diff HEAD --name-only`; restrict scan to those files only
@@ -256,20 +262,25 @@ If `AskUserQuestion` is unavailable, display this menu instead:
 ║     - Focus on infrastructure and supply chain risks               ║
 ╠════════════════════════════════════════════════════════════════════╣
 ║ [8] Full System Scan                                              ║
-║     - All 35 categories                                           ║
+║     - All 39 categories                                           ║
 ║     - Comprehensive but uses more tokens                          ║
 ╠════════════════════════════════════════════════════════════════════╣
-║ [9] Custom Selection                                              ║
-║     - Pick specific categories individually                       ║
-║     - Select by name or number                                     ║
+║ [9] Governance & Compliance (Extended)                             ║
+║     - FIPS 140-3, Governance Certs, BC/DR, Monitoring             ║
+║     - Data Classification & Lifecycle, Token Lifetimes             ║
+║     - Focus on regulatory and operational resilience               ║
 ╠════════════════════════════════════════════════════════════════════╣
-║ [10] Scan Changed Files Only (--diff)                              ║
+║ [10] Custom Selection                                              ║
+║      - Pick specific categories individually                       ║
+║      - Select by name or number                                    ║
+╠════════════════════════════════════════════════════════════════════╣
+║ [11] Scan Changed Files Only (--diff)                              ║
 ║      - Run Git diff and scan only modified files                   ║
 ║      - Good for pre-commit checks                                 ║
 ╠════════════════════════════════════════════════════════════════════╣
 ║ [0] Exit                                                           ║
 ╠════════════════════════════════════════════════════════════════════╣
-║ Enter your choice (0-10):                                          ║
+║ Enter your choice (0-11):                                          ║
 ╚════════════════════════════════════════════════════════════════════╝
 ```
 
@@ -289,25 +300,25 @@ If `AskUserQuestion` is unavailable, display this menu instead:
 - Display: "Quick Scan selected. Scanning X categories..."
 - Proceed with scan
 
-#### If User Enters 2-8 (Presets)
+#### If User Enters 2-9 (Presets)
 - Scan the predefined category groups (see mapping below)
 - Display: "Web Security scan selected. Scanning Y categories..."
 - Proceed with scan
 
-#### If User Enters 9 (Custom Selection)
+#### If User Enters 10 (Custom Selection)
 - Present category selection menu (see below)
 - Accept both category numbers AND names
 - Display: "Custom scan selected. Scanning Z categories..."
 - Proceed with scan
 
-#### If User Enters 10 (Diff Mode)
+#### If User Enters 11 (Diff Mode)
 - Run `git diff HEAD --name-only` to get changed files
 - Scan only changed files + their dependencies
 - Display: "Diff scan selected. Scanning changed files..."
 - Proceed with scan
 
 #### If User Enters Invalid Input
-- Display: "Invalid choice. Please enter 0-10."
+- Display: "Invalid choice. Please enter 0-11."
 - Re-display menu
 
 #### If Arguments Provided (Skip Menu)
@@ -330,13 +341,14 @@ Categories: 1, 2, 5, 8, 10, 12
 - Logging & Data Exposure (12)
 
 #### Group 3: Secrets & Authentication
-Categories: 3, 4, 7
+Categories: 3, 4, 7, 39
 - Hardcoded Secrets (3)
 - Authentication Issues (4)
 - Rate Limiting (7)
+- Token & Session Lifetimes (39)
 
 #### Group 4: Modern Stack
-Categories: 6, 11, 13, 14, 15, 16, 17, 18, 19
+Categories: 6, 11, 13, 14, 15, 16, 17, 18, 19, 39
 - Supabase Security (6)
 - Cloud Security (11)
 - Stripe Security (13)
@@ -346,15 +358,14 @@ Categories: 6, 11, 13, 14, 15, 16, 17, 18, 19
 - Database Security (17)
 - Redis/Cache Security (18)
 - SMS/Communication (19)
+- Token & Session Lifetimes (39)
 
 #### Group 5: Compliance
-Categories: 20, 21, 22, 23, 34, 35
+Categories: 20, 21, 22, 23
 - HIPAA (20)
 - SOC 2 (21)
 - PCI-DSS (22)
 - GDPR (23)
-- FIPS 140-3 / Cryptographic Compliance (34)
-- Security Governance Certifications (35)
 
 #### Group 6: Performance
 Categories: 24, 25, 26
@@ -372,8 +383,16 @@ Categories: 27, 28, 29, 30, 31, 32, 33
 - Security Headers (32)
 - Unused Dependencies & Bloat (33)
 
-#### Group 8: Full System Scan (35 categories)
-Categories: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35
+#### Group 8: Full System Scan (39 categories)
+Categories: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39
+
+#### Group 9: Governance & Compliance (Extended)
+Categories: 34, 35, 36, 37, 38
+- FIPS 140-3 / Cryptographic Compliance (34)
+- Security Governance Certifications (35)
+- Business Continuity & Disaster Recovery (36)
+- Infrastructure Monitoring & Observability (37)
+- Data Classification & Lifecycle (38)
 
 ---
 
@@ -432,6 +451,9 @@ Found `fetch`, `axios`, `got`, or `node-fetch`:
 Found any auth package (`jsonwebtoken`, `passport`, `next-auth`, `@clerk/nextjs`, `@auth0/nextjs-auth0`, `better-auth`, `express-session`):
 - Add Category 7 (Rate Limiting)
 
+Found any auth/session/JWT package (`jsonwebtoken`, `jose`, `next-auth`, `@auth/core`, `better-auth`, `@clerk/nextjs`, `@auth0/nextjs-auth0`, `express-session`, `iron-session`, `lucia`):
+- Add Category 39 (Token & Session Lifetime Analysis)
+
 Found `cors` package:
 - Add Category 8 (CORS Configuration)
 
@@ -481,6 +503,15 @@ Found `.github/workflows` directory exists:
 Found any web framework (`next`, `express`, `fastify`):
 - Add Category 32 (Security Headers)
 
+Found `opossum`, `cockatiel`, or patterns matching circuit breaker / retry / graceful shutdown:
+- Add Category 36 (Business Continuity & Disaster Recovery)
+
+Found `@sentry/node`, `@datadog/datadog-api-client`, `newrelic`, `prom-client`, `@opentelemetry/*`, `dd-trace`, `@grafana/*`:
+- Add Category 37 (Infrastructure Monitoring & Observability)
+
+Found `cron`, `node-cron`, `@upstash/qstash` with data cleanup patterns, or `ttl`, `retention`, `purge`, `anonymize` keywords:
+- Add Category 38 (Data Classification & Lifecycle)
+
 #### Example Output
 
 ```
@@ -518,7 +549,6 @@ Modern Stack
 Compliance
   [20] HIPAA (20)                    [21] SOC 2 (21)
   [22] PCI-DSS (22)                  [23] GDPR (23)
-  [34] FIPS 140-3 (34)               [35] Gov Certifications (35)
 
 Performance
   [24] Memory Leaks (24)             [25] N+1 Queries (25)
@@ -529,6 +559,11 @@ Infrastructure & Supply Chain
   [29] File Uploads (29)             [30] Input Validation (30)
   [31] CI/CD Security (31)           [32] Security Headers (32)
   [33] Unused Dependencies (33)
+
+Governance & Compliance (Extended)
+  [34] FIPS 140-3 (34)               [35] Gov Certifications (35)
+  [36] BC/DR (36)                    [37] Monitoring (37)
+  [38] Data Classification (38)      [39] Token Lifetimes (39)
 
 ══════════════════════════════════════════════════════════════════════
 
@@ -549,7 +584,7 @@ Your selection:
 - For each item, check if it's a number or name
 - Map names to category numbers (case-insensitive, partial match)
 - Remove duplicates
-- Validate all categories are in range 1-35
+- Validate all categories are in range 1-39
 
 **Examples:**
 
@@ -570,7 +605,7 @@ Input: `"1 1 3 3"`
 
 Input: `"99 xyz"`
 → Invalid categories detected
-→ Display: "Invalid categories: 99, xyz. Please enter 1-35 or valid names."
+→ Display: "Invalid categories: 99, xyz. Please enter 1-39 or valid names."
 → Re-display menu
 
 #### Name to Category Mapping
@@ -613,6 +648,10 @@ Support flexible matching:
 "unused" or "bloat" or "unused dependencies" or "dead packages" → 33
 "fips" or "fips140" or "fips 140" or "cryptographic compliance" → 34
 "iso" or "iso27001" or "fedramp" or "cmmc" or "governance" or "nist" → 35
+"bcdr" or "bc/dr" or "business continuity" or "disaster recovery" or "circuit breaker" → 36
+"monitoring" or "observability" or "apm" or "tracing" or "alerting" → 37
+"data classification" or "data lifecycle" or "retention" or "pii" or "data labeling" → 38
+"token" or "token lifetime" or "session lifetime" or "token expiry" or "refresh token" or "session timeout" → 39
 ```
 
 ---
@@ -2278,6 +2317,255 @@ If zero hits are found in source files (excluding `node_modules/`), the package 
 
 ---
 
+## CATEGORY 36: Business Continuity & Disaster Recovery
+
+> **Maps to Upstash Trust Center controls:** "Continuity and Disaster Recovery plans established", "Continuity and disaster recovery plans tested", "Backup processes established", "Infrastructure performance monitored"
+
+### Detection
+- Health check endpoints: `/health`, `/ready`, `/live`, `/healthz`, `/readyz`, `/livez`
+- Process signal handlers: `SIGTERM`, `SIGINT`, `process.on('beforeExit')`
+- Circuit breaker libraries: `opossum`, `cockatiel`, custom circuit breaker patterns
+- Retry/backoff patterns: `retry`, `exponential-backoff`, `p-retry`
+- IaC backup configs: Terraform `aws_db_instance` with `backup_retention_period`, RDS snapshots
+
+### What to Search For
+- Health check / readiness / liveness endpoints
+- Graceful shutdown handlers (`SIGTERM`, `SIGINT`, `process.on('beforeExit')`)
+- Circuit breaker patterns (library-based or custom state machines)
+- Retry logic with exponential backoff
+- Database connection pool failover / reconnect logic
+- Backup configuration in IaC (Terraform backup resources, RDS snapshots, etc.)
+- Multi-region / multi-AZ deployment configs
+- Queue dead-letter configs (DLQ)
+- Error recovery / fallback patterns
+
+### Critical
+- No health check endpoint found in any server entry point (no `/health`, `/ready`, or equivalent)
+- No graceful shutdown handler — server does not listen for `SIGTERM` or `SIGINT`
+- Database connections with no reconnect logic and no connection pool (single connection, crash on disconnect)
+
+### High
+- No circuit breaker or retry pattern for external service calls (API, database, cache)
+- No dead-letter queue configuration for async message processing
+- No backup configuration in IaC for production databases
+- Missing connection pool failover (single-host connection string with no fallback)
+
+### Medium
+- Health endpoint returns 200 without actually checking downstream dependencies
+- Retry logic without exponential backoff (fixed delay or no delay)
+- No multi-AZ or multi-region configuration in IaC
+
+### Context Check
+1. Does the application have a health check endpoint that verifies actual service health?
+2. Does the server handle `SIGTERM` gracefully (drain connections, close pools)?
+3. Are external service calls wrapped in circuit breakers or retry logic?
+4. Is there backup configuration for production data stores?
+
+### NOT Vulnerable
+- Health endpoints that check database and cache connectivity before returning 200
+- Graceful shutdown draining in-flight requests before exit
+- Circuit breaker libraries wrapping external API calls
+- Retry with exponential backoff and jitter
+- IaC with automated backup and point-in-time recovery configured
+- Kubernetes liveness/readiness probes defined in deployment manifests
+
+### Files to Check
+- `**/server*.{ts,js}`, `**/app*.{ts,js}`, `**/index*.{ts,js}` (entry points)
+- `**/health*.{ts,js}`, `**/ready*.{ts,js}`
+- `**/*.tf`, `**/docker-compose*.yml`, `**/k8s/**/*.yml`
+- `**/queue*.{ts,js}`, `**/worker*.{ts,js}`
+
+---
+
+## CATEGORY 37: Infrastructure Monitoring & Observability
+
+> **Maps to Upstash Trust Center controls:** "Infrastructure performance monitored", "Log management utilized", "Intrusion detection system utilized", "Vulnerability and system monitoring procedures established"
+
+### Detection
+- APM/monitoring packages: `@sentry/node`, `@datadog/datadog-api-client`, `dd-trace`, `newrelic`, `@elastic/apm-node`
+- Metrics packages: `prom-client`, `@opentelemetry/*`, `hot-shots` (StatsD)
+- Logging packages: `winston`, `pino`, `bunyan` (structured), vs raw `console.log`
+- Alerting integrations: PagerDuty, OpsGenie, Slack webhook for alerts
+
+### What to Search For
+- APM/monitoring integration (Datadog, New Relic, Sentry, Grafana, Prometheus)
+- Structured logging vs raw `console.log` in production
+- Alert/notification configuration (PagerDuty, OpsGenie, Slack webhooks for alerts)
+- Metric collection (StatsD, Prometheus client, custom metrics)
+- Error tracking integration (Sentry DSN, Bugsnag, Rollbar)
+- Uptime/health check endpoint existence
+- Log levels configured (not all debug in production)
+- Distributed tracing (OpenTelemetry, Jaeger, Zipkin)
+
+### Critical
+- No error tracking or APM integration in a production application (no Sentry, Datadog, New Relic, or equivalent)
+- No structured logging library — production code relies entirely on `console.log` / `console.error`
+
+### High
+- No alerting integration — errors captured but no notification channel (PagerDuty, OpsGenie, Slack)
+- No metric collection for application performance (no Prometheus, StatsD, or cloud metrics)
+- Log level set to `debug` or `trace` in production configuration
+- No distributed tracing in a microservices architecture
+
+### Medium
+- Structured logging library installed but no log correlation IDs (request tracing across services)
+- Error tracking DSN hardcoded instead of environment variable
+- No custom application metrics beyond default framework metrics
+
+### Context Check
+1. Is this a production application or a prototype/hobby project?
+2. Is monitoring handled at infrastructure level (cloud provider monitoring, Vercel analytics)?
+3. Does the structured logging library produce JSON or plain text?
+4. Are alerts routed to an on-call system or just logged?
+
+### NOT Vulnerable
+- Sentry, Datadog, or New Relic properly configured with DSN from environment variables
+- Structured logging with `winston` or `pino` producing JSON output
+- AlertManager, PagerDuty, or OpsGenie integration for critical errors
+- OpenTelemetry or equivalent distributed tracing configured
+- Prometheus metrics endpoint exposed for scraping
+- Log levels properly configured per environment (debug in dev, info/warn in prod)
+
+### Files to Check
+- `**/instrument*.{ts,js}`, `**/tracing*.{ts,js}`, `**/telemetry*.{ts,js}`
+- `**/logger*.{ts,js}`, `**/logging*.{ts,js}`
+- `**/sentry*.{ts,js}`, `**/datadog*.{ts,js}`, `**/newrelic*.{ts,js}`
+- `**/metrics*.{ts,js}`, `**/monitoring*.{ts,js}`
+- `.env*` (check for `SENTRY_DSN`, `DD_API_KEY`, `NEW_RELIC_LICENSE_KEY`)
+
+---
+
+## CATEGORY 38: Data Classification & Lifecycle
+
+> **Maps to Upstash Trust Center controls:** "Data classification policy established", "Data retention procedures established", "Customer data deleted upon leaving", "Data encryption utilized"
+>
+> **Cross-reference:** Overlaps with Category 23 (GDPR) for data deletion/export and Category 20 (HIPAA) for PHI handling. Only flag here for classification labeling, retention TTLs, and lifecycle management not covered by those categories.
+
+### Detection
+- Data model definitions: Prisma schema, Drizzle schema, Mongoose models, TypeORM entities
+- TTL/expiry patterns: `expiresAt`, `ttl`, `retentionDays`, `deleteAfter`
+- Cleanup/purge jobs: `cron`, `node-cron`, `@upstash/qstash`, scheduled functions
+- PII markers: `@sensitive`, `@pii`, `@classified`, data classification decorators
+
+### What to Search For
+- Data classification labels/markers on models or schemas
+- Data retention TTLs / cleanup jobs / cron for purging old data
+- Customer data export endpoints (data portability)
+- Customer data deletion cascades (account deletion completeness)
+- PII field markers/decorators in schemas
+- Sensitive data segregation (separate tables/collections for PII)
+- Data anonymization/pseudonymization functions
+
+### Critical
+- User/customer data with no deletion mechanism — account deletion leaves orphan records in related tables
+- PII stored alongside non-sensitive data with no field-level encryption or access segregation
+
+### High
+- No data retention policy — no TTL, `expiresAt`, or cleanup job for any user-generated data
+- No data classification markers on schemas containing PII fields (email, phone, address, SSN, DOB)
+- Account deletion endpoint exists but does not cascade to all related tables (partial deletion)
+- Sensitive data (tokens, keys, PII) stored in same table/collection as public data with no access differentiation
+
+### Medium
+- No anonymization or pseudonymization functions for analytics data derived from PII
+- Data retention TTLs defined but no automated cleanup job to enforce them
+- No customer data export/portability endpoint (beyond GDPR scope — general best practice)
+
+### Context Check
+1. Does the application store PII (email, phone, address, financial data)?
+2. Is there a data retention policy defined (even informally in docs)?
+3. Does account deletion cascade to all related tables and external services?
+4. Are PII fields identifiable in schemas (labeled, commented, or in separate models)?
+
+### NOT Vulnerable
+- Schemas with explicit PII markers or comments identifying sensitive fields
+- Automated cleanup jobs (cron, scheduled function) purging expired data
+- Account deletion that cascades to all related records (ON DELETE CASCADE or application-level)
+- Separate encrypted tables/collections for PII with restricted access
+- Data anonymization applied before analytics processing
+- Data export endpoint returning user's data in portable format
+
+### Files to Check
+- `prisma/schema.prisma`, `**/schema*.{ts,js}`, `**/models/**/*.{ts,js}`
+- `**/cron*.{ts,js}`, `**/jobs/**/*.{ts,js}`, `**/cleanup*.{ts,js}`
+- `**/delete*account*.{ts,js}`, `**/account*delete*.{ts,js}`
+- `**/anonymize*.{ts,js}`, `**/pseudonymize*.{ts,js}`
+- `**/export*data*.{ts,js}`, `**/data*export*.{ts,js}`
+
+---
+
+## CATEGORY 39: Token & Session Lifetime Analysis
+
+> **Cross-reference:** Category 4 covers auth mechanism security (weak JWT secrets, open redirects). Category 14 covers provider misconfiguration. Category 21 flags *missing* timeouts for SOC 2 compliance. This category evaluates whether *configured* lifetimes are reasonable for the application's use case, whether refresh flows exist, and whether logout actually invalidates tokens.
+
+### Detection
+- JWT libraries: `jsonwebtoken`, `jose`, `next-auth`, `@auth/core`, `better-auth`, `lucia`
+- Session libraries: `express-session`, `iron-session`
+- Auth providers: `@clerk/nextjs`, `@auth0/nextjs-auth0`
+- Token patterns: `expiresIn`, `maxAge`, `ttl`, `refreshToken`, `jwt.sign`, `session.cookie.maxAge`
+
+### What to Search For
+- Token expiry configuration (`expiresIn`, `maxAge`, `ttl`)
+- Refresh token creation and rotation logic
+- Logout endpoint — does it invalidate the token server-side (blocklist, DB delete)?
+- Session cookie settings (`secure`, `httpOnly`, `sameSite`, `maxAge`)
+- Different token types (access vs refresh vs API key) and their durations
+- Hardcoded magic numbers for durations with no comment or env var
+
+### Context-Aware Evaluation Rules
+
+**Before flagging any lifetime as too long or too short, determine the app type** from `package.json` description, README, route structure, and domain context. Apply the Lifetime Reasonableness Table:
+
+| App Type | Access Token | Refresh Token | Notes |
+|---|---|---|---|
+| Banking / Healthcare | 5–15 min | 30–60 min | Short is correct; do NOT flag |
+| Admin Panel | 15 min–1 hr | 4–8 hr | Step-up auth for sensitive ops |
+| SaaS / Productivity | 15 min–1 hr | 7–30 days | Standard web app |
+| Social / Consumer | 15 min–1 hr | 30–90 days | Long refresh is expected |
+| API Service (M2M) | 1–24 hr | No refresh needed | API keys / service tokens |
+
+### Critical
+- No expiration set at all — token lives forever (`expiresIn` absent and no default)
+- Access token >24 hours with no refresh flow
+- Logout endpoint only clears client-side cookie/storage but does not invalidate token server-side (JWT stays valid until expiry)
+- Refresh token >1 year
+- Admin/elevated token >4 hours with no step-up authentication
+
+### High
+- Short access token with no refresh mechanism — users get silently logged out mid-session
+- Access token duration longer than refresh token (inverted — refresh should always outlive access)
+- Same duration for all token types (copy-paste pattern — access, refresh, and API tokens all set to `'1h'`)
+- Hardcoded magic numbers with no explanatory comment or env var (e.g., `expiresIn: 86400` with no context)
+
+### Medium
+- Tutorial-default `'1h'` or `'7d'` with no evidence of deliberate choice (no comment, no env var, no docs)
+- Mismatched session strategy — e.g., JWT with `express-session` both configured but not coordinated
+- No sliding window / rolling session — session expires at fixed time regardless of activity
+- Session cookie missing `secure`, `httpOnly`, or `sameSite` attributes
+
+### Context Check
+1. What type of application is this? (Determines reasonable lifetime ranges)
+2. Is there a refresh token flow, or only a single access token?
+3. Does logout actually invalidate the token (server-side blocklist, DB delete, session destroy)?
+4. Are different token types (access, refresh, API) configured with appropriate different durations?
+5. Is the lifetime value from an env var or config file (deliberate) vs hardcoded (accidental)?
+
+### NOT Vulnerable
+- Short access token (15 min) + working refresh flow with rotation
+- Banking/healthcare app with aggressive 5–15 min timeout
+- Lifetime loaded from environment variable with documentation explaining the choice
+- Auth provider (Clerk, Auth0) managing token lifetime via their dashboard — app code defers to provider
+- `expiresIn: '1h'` with an explanatory comment like `// 1 hour access, refresh handles long sessions`
+- Logout endpoint that calls `session.destroy()`, deletes refresh token from DB, or adds JWT to server-side blocklist
+
+### Files to Check
+- `**/auth*.{ts,js}`, `**/session*.{ts,js}`, `**/login*.{ts,js}`
+- `**/logout*.{ts,js}`, `**/refresh*.{ts,js}`, `**/token*.{ts,js}`
+- `**/api/auth/**`, `**/middleware*.{ts,js}`
+- `.env*`, `**/config/**`
+
+---
+
 ## FINAL REPORT FORMAT
 
 ```markdown
@@ -2318,6 +2606,10 @@ If zero hits are found in source files (excluding `node_modules/`), the package 
 - [ ] No unused or bloated dependencies found (Category 33 - Unused Dependencies)
 - [ ] FIPS-approved algorithms and key sizes in use (Category 34 - FIPS 140-3)
 - [ ] Governance certification controls implemented (Category 35 - ISO 27001/FedRAMP/CMMC)
+- [ ] Health checks, graceful shutdown, and circuit breakers in place (Category 36 - BC/DR)
+- [ ] APM, structured logging, and alerting configured (Category 37 - Monitoring)
+- [ ] Data classification, retention, and deletion lifecycle defined (Category 38 - Data Classification)
+- [ ] Token lifetimes appropriate for app type, refresh flow implemented, logout invalidates tokens (Category 39 - Token Lifetimes)
 ```
 
 **IMPORTANT:** When reporting findings involving secrets, ALWAYS redact the actual values:
