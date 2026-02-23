@@ -1,10 +1,41 @@
+# Secrets & credentials
 .env*
 !.env.example
 *.pem
 *.key
+.dev.vars
+
+# Build & runtime artifacts
+node_modules/
+dist/
+.wrangler/
 *.db
 *.db-journal
+
+# OS
 .DS_Store
-node_modules/
+
+# Scan output
 SECURITY_AUDIT_REPORT.md
-.dev.vars
+
+# Web app & services (separate from the plugin)
+packages/
+package.json
+package-lock.json
+tsconfig.base.json
+
+# Screenshots & marketing assets
+*.png
+*.jpg
+*.jpeg
+
+# Demos & standalone files
+faketerm/
+vibeathon/
+logo/
+index.html
+explained.html
+upstash-trust-controls.md
+
+# Tooling
+.playwright-mcp/

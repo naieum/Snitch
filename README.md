@@ -161,7 +161,11 @@ Snitch gives you options:
 
 It's not some pattern-matching robot that sees the word "password" and panics. For every category, Snitch knows what to look for, what's actually dangerous versus what just looks suspicious, and what to check before sounding the alarm. Is this test code? Is there input validation right above it? Is this running on the server or could it end up in the browser?
 
-Every finding comes with the file, the line number, the actual code, why it's a problem, and how to fix it. If it can't prove it, it doesn't report it. I wish my mechanic worked like that.
+Every finding comes with the file, the line number, the actual code, why it's a problem, and how to fix it. Findings are tagged with CWE, OWASP Top 10:2025, and CVSS 4.0 references so your GRC tools can ingest them directly. If it can't prove it, it doesn't report it. I wish my mechanic worked like that.
+
+## Contributors
+
+- [Jhean-François Fournier-Noël (@JF10R)](https://github.com/JF10R) — CWE, OWASP Top 10:2025, and CVSS 4.0 standards tagging on findings
 
 ## License
 
