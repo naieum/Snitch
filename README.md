@@ -173,7 +173,7 @@ Snitch isn't just a list of regex patterns. For every category, it knows:
 2. **What's actually vulnerable** - vs. what just looks scary
 3. **What context to check** - is this test code? is there validation nearby? is it server-only?
 
-Every finding in the report includes the file path, line number, exact code snippet, why it's vulnerable, and how to fix it. If Snitch can't prove it with evidence from your actual codebase, it doesn't report it.
+Every finding in the report includes the file path, line number, exact code snippet, why it's vulnerable, and how to fix it. Findings are tagged with CWE IDs, OWASP Top 10:2025 categories, and approximate CVSS 4.0 severity scores. If Snitch can't prove it with evidence from your actual codebase, it doesn't report it.
 
 ## Want to See It in Action?
 

@@ -1,4 +1,3 @@
-<\!-- Canonical source: skills/snitch/SKILL.md - keep in sync -->
 ---
 name: snitch
 description: Comprehensive security audit with evidence-based findings. Combines deep pattern knowledge with contextual reasoning to eliminate false positives.
@@ -83,6 +82,75 @@ Example secret redaction:
 - **Why it is vulnerable:** Production secret key hardcoded in source
 - **Fix:** Use environment variable: process.env.STRIPE_SECRET_KEY
 ```
+
+---
+
+## STANDARDS REFERENCE
+
+### OWASP Top 10:2025 Mapping
+| Snitch Category | OWASP |
+|---|---|
+| 1 SQL Injection | A05 Injection |
+| 2 XSS | A05 Injection |
+| 3 Hardcoded Secrets | A07 Authentication Failures |
+| 4 Authentication | A07 Authentication Failures |
+| 5 SSRF | A05 Injection |
+| 6 Supabase Security | A01 Broken Access Control |
+| 7 Rate Limiting | A07 Authentication Failures |
+| 8 CORS | A02 Security Misconfiguration |
+| 9 Cryptography | A04 Cryptographic Failures |
+| 10 Dangerous Code Patterns | A05 Injection |
+| 11 Cloud Security | A02 Security Misconfiguration |
+| 12 Logging & Data Exposure | A09 Security Logging and Alerting Failures |
+| 13 Stripe Security | A04 Cryptographic Failures |
+| 14 Auth Provider Security | A07 Authentication Failures |
+| 15 AI API Security | A02 Security Misconfiguration |
+| 16 Email Service Security | A02 Security Misconfiguration |
+| 17 Database Security | A05 Injection |
+| 18 Redis/Cache Security | A02 Security Misconfiguration |
+| 19 SMS/Communication | A02 Security Misconfiguration |
+| 27 Supply Chain | A03 Software Supply Chain Failures |
+| 28 Authorization/IDOR | A01 Broken Access Control |
+| 29 File Upload | A05 Injection |
+| 30 Input Validation/ReDoS | A05 Injection |
+| 31 CI/CD Pipeline | A08 Software or Data Integrity Failures |
+| 20 HIPAA | A04 Cryptographic Failures |
+| 21 SOC 2 | A01 Broken Access Control |
+| 22 PCI-DSS | A04 Cryptographic Failures |
+| 23 GDPR | A01 Broken Access Control |
+| 32 Security Headers | A02 Security Misconfiguration |
+
+### CWE Mapping (Primary IDs)
+| Snitch Category | CWE |
+|---|---|
+| 1 SQL Injection | CWE-89 |
+| 2 XSS | CWE-79 |
+| 3 Hardcoded Secrets | CWE-798 |
+| 4 Authentication | CWE-306, CWE-307 |
+| 5 SSRF | CWE-918 |
+| 7 Rate Limiting | CWE-770 |
+| 8 CORS | CWE-346 |
+| 9 Cryptography | CWE-327, CWE-330 |
+| 10 Dangerous Code Patterns | CWE-94 |
+| 12 Logging & Data Exposure | CWE-200, CWE-532 |
+| 17 Database Security | CWE-89, CWE-311 |
+| 28 Authorization/IDOR | CWE-862, CWE-639 |
+| 29 File Upload | CWE-434 |
+| 30 Input Validation/ReDoS | CWE-20, CWE-1333 |
+| 31 CI/CD Pipeline | CWE-502 |
+| 20 HIPAA | CWE-311, CWE-532 |
+| 21 SOC 2 | CWE-778, CWE-284 |
+| 22 PCI-DSS | CWE-311, CWE-798 |
+| 23 GDPR | CWE-359, CWE-200 |
+| 32 Security Headers | CWE-693 |
+
+### CVSS 4.0 Severity Alignment
+| Snitch Severity | CVSS 4.0 Range | Guidance |
+|---|---|---|
+| Critical | 9.0–10.0 | Immediate exploitation possible, no auth required |
+| High | 7.0–8.9 | Significant risk, limited prerequisites |
+| Medium | 4.0–6.9 | Exploitable with conditions or partial impact |
+| Low | 0.1–3.9 | Informational / defense-in-depth |
 
 ---
 
@@ -1919,10 +1987,14 @@ Present these options:
 ## Summary
 - **Overall Risk:** [Critical/High/Medium/Low]
 - **Findings:** X Critical, X High, X Medium, X Low
+- **Standards:** CWE Top 25 (2025), OWASP Top 10 (2025), CVSS 4.0
 
 ## Critical Findings
 
 ### 1. [Title]
+- **Severity:** Critical | CVSS 4.0: ~9.8
+- **CWE:** CWE-89 (SQL Injection)
+- **OWASP:** A05:2025 Injection
 - **File:** path/to/file.js:47
 - **Evidence:** [exact code from file, secrets replaced with X's]
 - **Risk:** [What could happen]
@@ -1968,5 +2040,6 @@ Present these options:
 7. **Server vs Client matters.** Secrets in server-only code are often fine.
 8. **Redact all secrets.** Replace actual values with X's in all output.
 9. **Stay in scope.** Only report on selected categories. No findings, passed checks, or bright spots for unselected categories.
+10. **Tag findings.** Include CWE, OWASP, and approximate CVSS from the Standards Reference table. Omit for non-security categories (performance, compliance-only).
 
 $ARGUMENTS
