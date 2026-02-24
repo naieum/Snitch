@@ -143,7 +143,7 @@ Snitch gives you options:
 
 ## What It Checks
 
-39 categories. That's not a typo. Let me break it down so it doesn't sound like a college syllabus.
+40 categories. That's not a typo. Let me break it down so it doesn't sound like a college syllabus.
 
 **The Scary Stuff** — SQL injection (someone runs database commands through your app), XSS (someone puts a script on your page that steals cookies), hardcoded secrets (your API keys are just... sitting there in the code), broken login flows, your server fetching URLs it shouldn't, and nobody put rate limits on anything so bots can try a million passwords.
 
@@ -154,6 +154,8 @@ Snitch gives you options:
 **Compliance** — HIPAA (patient data in your logs is a federal problem), SOC 2 (no audit trail means no audit trail), PCI-DSS (you're storing credit card numbers? in *this* economy?), GDPR (can your European users actually delete their data or is that button decorative?).
 
 **Performance** — Memory leaks (event listeners that never get cleaned up), N+1 queries (your ORM is hitting the database 200 times when it could hit it once), and code that blocks the whole server while it reads a file.
+
+**Tunnels & DNS** — ngrok authtokens committed to git, cloudflared tunnel credentials exposed, dev tunnels shipped to production, plaintext secrets in `wrangler.toml`, `.dev.vars` tracked in version control, hardcoded DNS resolvers, missing DNS-over-HTTPS. If you're tunneling to localhost and forgot to clean it up, Snitch will find it.
 
 **The Rest** — Vulnerable npm packages, users accessing each other's data, file uploads with no validation, inputs that crash your regex engine, CI/CD pipelines with secrets in plain text, missing security headers, dead dependencies making your bundle enormous, crypto compliance, governance certifications, disaster recovery, monitoring, and data lifecycle.
 

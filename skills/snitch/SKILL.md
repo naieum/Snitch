@@ -141,6 +141,7 @@ Tag each finding with the applicable CWE, OWASP Top 10:2025 category, and approx
 | 37 | Monitoring | A09 Security Logging and Alerting Failures | CWE-778 |
 | 38 | Data Classification | A01 Broken Access Control | CWE-200 |
 | 39 | Token Lifetimes | A07 Authentication Failures | CWE-613 |
+| 40 | Tunnels & DNS | A02 Security Misconfiguration | CWE-200 |
 
 ### CVSS 4.0 Severity Alignment
 
@@ -169,7 +170,7 @@ hard error.
 
 **Call `AskUserQuestion` now — do not output anything first.**
 
-Three sequential `AskUserQuestion` calls. Each shows checkboxes for a slice of the 39 categories. Accumulate all checked items across all three calls, then run the union.
+Three sequential `AskUserQuestion` calls. Each shows checkboxes for a slice of the 40 categories. Accumulate all checked items across all three calls, then run the union.
 
 ---
 
@@ -198,10 +199,10 @@ Call `AskUserQuestion` with 4 questions:
 **Q4** `multiSelect: false` | header: `"Scan Mode"`
 - **Continue →** pick more categories on the next pages
 - **Quick Scan** auto-detect what matters based on your tech stack
-- **Full System Scan** check everything (all 39 categories)
+- **Full System Scan** check everything (all 40 categories)
 
 > If Q4 = **Quick Scan**: run smart detection + any Q1–Q3 boxes already checked; stop here.
-> If Q4 = **Full System Scan**: run all 39; stop here.
+> If Q4 = **Full System Scan**: run all 40; stop here.
 > If Q4 = **Continue →**: proceed to Call 2 with Q1–Q3 selections accumulated.
 
 ---
@@ -235,7 +236,7 @@ Call `AskUserQuestion` with 4 questions:
 
 ---
 
-#### Call 3 of 3 — Infrastructure, Supply Chain & Governance (Cats 27–38) + Scope
+#### Call 3 of 3 — Infrastructure, Supply Chain & Governance (Cats 27–38, 40) + Scope
 
 Call `AskUserQuestion` with 4 questions:
 
@@ -249,13 +250,13 @@ Call `AskUserQuestion` with 4 questions:
 - **🔧 CI/CD Pipelines** (Cat 31) — secrets hardcoded in GitHub Actions or workflows
 - **🛡️ Security Headers** (Cat 32) — missing CSP, HSTS, or clickjacking protection
 - **🧹 Unused Packages** (Cat 33) — dead dependencies, deprecated libs, bundle bloat
-- **🔏 FIPS Crypto** (Cat 34) — non-compliant algorithms, weak TLS, small key sizes
+- **🚇 Tunnels & DNS** (Cat 40) — ngrok/cloudflared credentials exposed, hardcoded resolvers, dev tunnels in production
 
 **Q3** `multiSelect: true` | header: `"Governance"`
+- **🔏 FIPS Crypto** (Cat 34) — non-compliant algorithms, weak TLS, small key sizes
 - **🏛️ Certifications** (Cat 35) — ISO 27001, FedRAMP, CMMC control gaps
 - **🔄 Disaster Recovery** (Cat 36) — no health checks, no graceful shutdown, no backups
-- **📡 Monitoring** (Cat 37) — no error tracking, no structured logging, no alerts
-- **🗂️ Data Lifecycle** (Cat 38) — no data retention policy, PII not labeled, no cleanup jobs
+- **🗂️ Data & Monitoring** (Cats 37+38) — no structured logging, no alerts, no data retention policy, PII not labeled
 
 **Q4** `multiSelect: false` | header: `"Scope"`
 - **Entire codebase** scan all source files (Recommended)
@@ -268,7 +269,7 @@ Call `AskUserQuestion` with 4 questions:
 After all three calls (or fewer if Quick/Full shortcut used):
 
 1. **Accumulate** all checked categories from every question across all calls into a single set
-2. **Full System Scan shortcut** → overrides accumulated set; scan all 39
+2. **Full System Scan shortcut** → overrides accumulated set; scan all 40
 3. **Quick Scan shortcut** → run smart detection + merge any manually checked cats
 4. **Nothing checked** after Call 3 → display: "Please select at least one category." Re-present Call 1
 5. **Diff scope selected** → run `git diff HEAD --name-only`; restrict scan to those files only
@@ -321,7 +322,7 @@ If `AskUserQuestion` is unavailable, display this menu instead:
 ║     - Focus on infrastructure and supply chain risks               ║
 ╠════════════════════════════════════════════════════════════════════╣
 ║ [8] Full System Scan                                              ║
-║     - All 39 categories                                           ║
+║     - All 40 categories                                           ║
 ║     - Comprehensive but uses more tokens                          ║
 ╠════════════════════════════════════════════════════════════════════╣
 ║ [9] Governance & Compliance (Extended)                             ║
@@ -433,7 +434,7 @@ Categories: 24, 25, 26
 - Performance Problems (26)
 
 #### Group 7: Infrastructure & Supply Chain
-Categories: 27, 28, 29, 30, 31, 32, 33
+Categories: 27, 28, 29, 30, 31, 32, 33, 40
 - Dependency Vulnerabilities (27)
 - Authorization & Access Control (28)
 - File Upload Security (29)
@@ -441,9 +442,10 @@ Categories: 27, 28, 29, 30, 31, 32, 33
 - CI/CD Pipeline Security (31)
 - Security Headers (32)
 - Unused Dependencies & Bloat (33)
+- Tunnels & DNS Security (40)
 
-#### Group 8: Full System Scan (39 categories)
-Categories: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39
+#### Group 8: Full System Scan (40 categories)
+Categories: 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40
 
 #### Group 9: Governance & Compliance (Extended)
 Categories: 34, 35, 36, 37, 38
@@ -571,6 +573,12 @@ Found `@sentry/node`, `@datadog/datadog-api-client`, `newrelic`, `prom-client`, 
 Found `cron`, `node-cron`, `@upstash/qstash` with data cleanup patterns, or `ttl`, `retention`, `purge`, `anonymize` keywords:
 - Add Category 38 (Data Classification & Lifecycle)
 
+Found `ngrok`, `.ngrok2/`, `.ngrok/`, `NGROK_AUTHTOKEN` in env/config, or `cloudflared`, `.cloudflared/`, `TUNNEL_TOKEN`, `trycloudflare.com` URLs:
+- Add Category 40 (Tunnels & DNS Security)
+
+Found `wrangler.toml`, `wrangler.jsonc`, `.dev.vars`, `miniflare`, `CLOUDFLARE_API_TOKEN`, `CF_API_TOKEN`:
+- Add Category 40 (Tunnels & DNS Security)
+
 #### Example Output
 
 ```
@@ -617,12 +625,13 @@ Infrastructure & Supply Chain
   [27] Dependencies (27)             [28] Authorization/IDOR (28)
   [29] File Uploads (29)             [30] Input Validation (30)
   [31] CI/CD Security (31)           [32] Security Headers (32)
-  [33] Unused Dependencies (33)
+  [33] Unused Dependencies (33)      [40] Tunnels & DNS (40)
 
 Governance & Compliance (Extended)
   [34] FIPS 140-3 (34)               [35] Gov Certifications (35)
   [36] BC/DR (36)                    [37] Monitoring (37)
   [38] Data Classification (38)      [39] Token Lifetimes (39)
+
 
 ══════════════════════════════════════════════════════════════════════
 
@@ -643,7 +652,7 @@ Your selection:
 - For each item, check if it's a number or name
 - Map names to category numbers (case-insensitive, partial match)
 - Remove duplicates
-- Validate all categories are in range 1-39
+- Validate all categories are in range 1-40
 
 **Examples:**
 
@@ -664,7 +673,7 @@ Input: `"1 1 3 3"`
 
 Input: `"99 xyz"`
 → Invalid categories detected
-→ Display: "Invalid categories: 99, xyz. Please enter 1-39 or valid names."
+→ Display: "Invalid categories: 99, xyz. Please enter 1-40 or valid names."
 → Re-display menu
 
 #### Name to Category Mapping
@@ -711,6 +720,7 @@ Support flexible matching:
 "monitoring" or "observability" or "apm" or "tracing" or "alerting" → 37
 "data classification" or "data lifecycle" or "retention" or "pii" or "data labeling" → 38
 "token" or "token lifetime" or "session lifetime" or "token expiry" or "refresh token" or "session timeout" → 39
+"tunnel" or "ngrok" or "cloudflared" or "cloudflare tunnel" or "wrangler" or "miniflare" or "dns resolver" or "dns security" → 40
 ```
 
 ---
@@ -808,7 +818,8 @@ under `categories/` in the same directory as this skill file.
 24-memory-leaks.md, 25-n-plus-one.md, 26-performance.md, 27-dependencies.md,
 28-authorization.md, 29-file-uploads.md, 30-input-validation.md, 31-cicd.md,
 32-security-headers.md, 33-unused-deps.md, 34-fips.md, 35-governance.md,
-36-bcdr.md, 37-monitoring.md, 38-data-classification.md, 39-token-lifetimes.md
+36-bcdr.md, 37-monitoring.md, 38-data-classification.md, 39-token-lifetimes.md,
+40-tunnels-dns.md
 
 Do NOT pre-load all category files. Only Read the ones the user selected.
 
@@ -862,6 +873,7 @@ Do NOT pre-load all category files. Only Read the ones the user selected.
 - [ ] APM, structured logging, and alerting configured (Category 37 - Monitoring)
 - [ ] Data classification, retention, and deletion lifecycle defined (Category 38 - Data Classification)
 - [ ] Token lifetimes appropriate for app type, refresh flow implemented, logout invalidates tokens (Category 39 - Token Lifetimes)
+- [ ] No tunnel credentials in git, no dev tunnels in production, DNS resolvers configurable (Category 40 - Tunnels & DNS)
 ```
 
 **IMPORTANT:** When reporting findings involving secrets, ALWAYS redact the actual values:
