@@ -215,7 +215,7 @@ Call `AskUserQuestion` with 4 questions:
 - **🏢 Auth Providers** (Cat 14) — Clerk, Auth0, or NextAuth set up wrong
 - **⏱️ Token & Session Lifetimes** (Cat 39) — sessions that expire too soon, never, or don't log out properly
 - **💳 Stripe** (Cat 13) — secret keys exposed, webhooks not verified
-- **🤖 AI APIs** (Cat 15) — API keys leaked, no rate limits on AI calls
+- **🤖 AI APIs** (Cat 15) — prompt injection, jailbreaks, leaked keys, unsafe AI output, over-permissioned agents
 
 **Q2** `multiSelect: true` | header: `"Data & Messaging"`
 - **🗄️ Database** (Cat 17) — connection strings exposed, raw queries with user input
@@ -485,7 +485,7 @@ Found `stripe` or `@stripe/stripe-js`:
 Found `@supabase/supabase-js` or `@supabase/ssr`:
 - Add Category 6 (Supabase Security)
 
-Found `openai`, `@anthropic-ai/sdk`, or `ai`:
+Found `openai`, `@anthropic-ai/sdk`, `ai`, `@ai-sdk/openai`, `@langchain/core`, `langchain`, `@google/generative-ai`, `cohere-ai`, `@modelcontextprotocol/sdk`, or `llamaindex`:
 - Add Category 15 (AI API Security)
 
 Found `resend`, `@sendgrid/mail`, or `postmark`:
@@ -851,7 +851,7 @@ Do NOT pre-load all category files. Only Read the ones the user selected.
 - [ ] Proper password hashing (Category 9)
 - [ ] RLS enabled on all Supabase tables (Category 6)
 - [ ] Stripe webhook signatures verified (Category 13)
-- [ ] AI API keys server-only (Category 15)
+- [ ] AI API keys server-only, prompts sanitized, output treated as untrusted, agents least-privilege (Category 15 - AI API Security)
 - [ ] Database connections use parameterized queries (Category 17)
 - [ ] PHI encrypted at rest (Category 20 - HIPAA)
 - [ ] Audit logging on sensitive routes (Category 21 - SOC 2)
