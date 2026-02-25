@@ -141,6 +141,16 @@ Snitch gives you options:
 - **Fix all** — let it patch everything at once
 - **Done** — you're out
 
+## What's New
+
+**Recent additions** that make Snitch better:
+
+- **Category 40: Tunnels & DNS** — ngrok tokens, cloudflared credentials, dev tunnels in production. If you're using tunneling tools and forgot to clean up credentials, we catch it now.
+- **Session & Token Lifetime Checks** — Tokens that don't expire, logout that doesn't actually log you out, session confusion. We check if your auth actually works the way you think it does.
+- **Expanded AI API Coverage (Category 15)** — More patterns for catching API keys from Claude, GPT, Gemini, and other AI services scattered through your codebase.
+
+Check back regularly. We add new categories when we find new patterns that matter.
+
 ## What It Checks
 
 40 categories. That's not a typo. Let me break it down so it doesn't sound like a college syllabus.

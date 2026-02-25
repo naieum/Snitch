@@ -5,6 +5,7 @@ This repository contains **Snitch**, a Claude Code security audit plugin.
 ## Important Context for Editing
 
 - **`skills/snitch/SKILL.md`** is the Snitch audit skill. It guides Claude through security audits of other projects.
+- **`docs/guidelines/`** contains our contribution standards—read these before submitting code or new categories.
 
 ## Report Generation
 
