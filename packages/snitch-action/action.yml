@@ -1,0 +1,47 @@
+name: "Snitch Security Scan"
+description: "Run Snitch security audit on pull requests and post findings as comments"
+branding:
+  icon: "shield"
+  color: "purple"
+
+inputs:
+  snitch-api-key:
+    description: "Snitch API key (from snitch.live/dashboard/keys)"
+    required: true
+  anthropic-api-key:
+    description: "Anthropic API key for Claude analysis"
+    required: true
+  scan-type:
+    description: "Scan type: quick, web, secrets, modern, compliance, performance, infrastructure, governance, full, custom"
+    required: false
+    default: "quick"
+  categories:
+    description: "Comma-separated category numbers for custom scan type (e.g., '1,2,3,4')"
+    required: false
+    default: ""
+  fail-on:
+    description: "Fail the check if findings at this severity or above are found: critical, high, medium, low, none"
+    required: false
+    default: "critical"
+  model:
+    description: "Claude model to use for analysis"
+    required: false
+    default: "claude-sonnet-4-20250514"
+  auto-fix:
+    description: "Automatically create a fix PR for findings (true/false)"
+    required: false
+    default: "false"
+
+outputs:
+  findings-count:
+    description: "Total number of findings"
+  critical-count:
+    description: "Number of critical findings"
+  high-count:
+    description: "Number of high findings"
+  report-url:
+    description: "URL to the PR comment with the full report"
+
+runs:
+  using: "node20"
+  main: "dist/index.js"

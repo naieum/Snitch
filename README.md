@@ -8,7 +8,7 @@
 
 Security audit plugin for AI coding tools.
 
-Works with Claude Code, Gemini CLI, Codex CLI, OpenCode, Antigravity, and Cursor.
+Works with Claude Code, Gemini CLI, Codex CLI, Copilot CLI, Cursor, Windsurf, Cline, Kilo Code, Roo Code, Zed, GitHub Copilot (VS Code), Aider, Continue.dev, OpenCode, and Antigravity.
 
 **[snitch.live](https://snitch.live/plugin)**
 

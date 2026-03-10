@@ -1,0 +1,15 @@
+{
+  "identifier": "default",
+  "description": "Minimal permissions for Snitch Desktop",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-start-dragging",
+    "dialog:allow-open",
+    "dialog:allow-message",
+    "dialog:allow-ask",
+    "notification:default",
+    "process:default",
+    "opener:default"
+  ]
+}

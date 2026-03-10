@@ -1,0 +1,2 @@
+description = "Run a comprehensive security audit - 40 categories, evidence-based, zero false positives"
+prompt = """@{../skills/snitch/SKILL.md}"""

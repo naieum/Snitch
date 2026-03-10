@@ -1,0 +1,33 @@
+{
+  "id": "api-auth-clean",
+  "description": "Auth/data project with verification and observability controls in place.",
+  "scan_mode": "quick",
+  "selected_categories": [4, 12, 21, 28, 39],
+  "detected_features": ["next-auth", "vitest", "github-actions", "opentelemetry"],
+  "expected_validation_signals": [
+    {
+      "check_id": "VS-001",
+      "status": "pass",
+      "evidence": ["tests/security/session-regression.test.ts:9"],
+      "impact": "Reproducibility coverage is present for sensitive auth/session flows.",
+      "recommended_action": "Keep replay fixtures updated with schema and auth changes.",
+      "confidence": "high"
+    },
+    {
+      "check_id": "VS-005",
+      "status": "pass",
+      "evidence": ["src/observability/audit.ts:27"],
+      "impact": "Critical user and permission changes are traceable.",
+      "recommended_action": "Ensure new privileged routes continue to use audit hooks.",
+      "confidence": "high"
+    },
+    {
+      "check_id": "VS-006",
+      "status": "pass",
+      "evidence": ["src/auth/session.ts:63"],
+      "impact": "Runtime guardrails reduce abuse and blast radius.",
+      "recommended_action": "Review thresholds quarterly to keep guardrails effective.",
+      "confidence": "medium"
+    }
+  ]
+}

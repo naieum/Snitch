@@ -1,0 +1,25 @@
+name: Regression Fixtures
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  fixture-schema:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Validate regression fixtures
+        run: node ./scripts/ci/check_regression_fixtures.mjs
+
+      - name: Compare fixtures to sample scan outputs
+        run: node ./scripts/ci/compare_fixture_to_output.mjs

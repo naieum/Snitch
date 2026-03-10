@@ -11,6 +11,7 @@ dist/
 .wrangler/
 *.db
 *.db-journal
+**/target/
 
 # OS
 .DS_Store
@@ -18,8 +19,7 @@ dist/
 # Scan output
 SECURITY_AUDIT_REPORT.md
 
-# Web app & services (separate from the plugin)
-packages/
+# Web app & services — monorepo root files
 package.json
 package-lock.json
 tsconfig.base.json

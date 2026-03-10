@@ -1,0 +1,352 @@
+@import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap");
+
+/* ── Theme System ── */
+
+:root,
+[data-theme="midnight"] {
+  --bg-base: #09090b;
+  --bg-surface: #18181b;
+  --bg-raised: #27272a;
+  --bg-input: #09090b;
+  --bg-overlay: rgba(9, 9, 11, 0.8);
+
+  --border: #2e2e33;
+  --border-hover: #52525b;
+  --border-focus: #a1a1aa;
+
+  --text-primary: #fafafa;
+  --text-secondary: #a1a1aa;
+  --text-tertiary: #71717a;
+  --text-inverse: #09090b;
+
+  --accent: #e4e4e7;
+  --accent-hover: #ffffff;
+  --accent-active: #d4d4d8;
+  --accent-disabled: #3f3f46;
+  --accent-text: #09090b;
+
+  --link: #a1a1aa;
+  --link-hover: #fafafa;
+  --link-active: #d4d4d8;
+  --link-disabled: #3f3f46;
+
+  --btn-primary-bg: #fafafa;
+  --btn-primary-hover: #e4e4e7;
+  --btn-primary-active: #d4d4d8;
+  --btn-primary-text: #09090b;
+
+  --btn-secondary-bg: transparent;
+  --btn-secondary-border: #3f3f46;
+  --btn-secondary-hover-border: #71717a;
+  --btn-secondary-hover-bg: #18181b;
+  --btn-secondary-active-bg: #27272a;
+  --btn-secondary-text: #d4d4d8;
+
+  --danger: #ef4444;
+  --danger-hover: #dc2626;
+  --danger-active: #b91c1c;
+  --danger-surface: rgba(127, 29, 29, 0.3);
+  --danger-text: #fca5a5;
+  --danger-border: rgba(127, 29, 29, 0.5);
+
+  --success: #22c55e;
+  --success-surface: rgba(20, 83, 45, 0.3);
+  --success-text: #86efac;
+
+  --warning: #eab308;
+  --warning-surface: rgba(113, 63, 18, 0.3);
+  --warning-text: #fde047;
+
+  --info: #3b82f6;
+  --info-surface: rgba(30, 58, 138, 0.3);
+  --info-text: #93c5fd;
+
+  --sidebar-bg: #111113;
+  --sidebar-active-bg: rgba(255, 255, 255, 0.06);
+  --sidebar-active-text: #fafafa;
+
+  --badge-bg: #27272a;
+  --badge-text: #a1a1aa;
+
+  --code-bg: #09090b;
+
+  --shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.5);
+
+  color-scheme: dark;
+}
+
+[data-theme="cream"] {
+  --bg-base: #faf7f2;
+  --bg-surface: #ffffff;
+  --bg-raised: #f0ece4;
+  --bg-input: #ffffff;
+  --bg-overlay: rgba(250, 247, 242, 0.85);
+
+  --border: #e0dbd2;
+  --border-hover: #c8c1b4;
+  --border-focus: #4a6fa5;
+
+  --text-primary: #1a1a2e;
+  --text-secondary: #5a5a6e;
+  --text-tertiary: #8a8a9a;
+  --text-inverse: #faf7f2;
+
+  --accent: #4a6fa5;
+  --accent-hover: #3d5f8f;
+  --accent-active: #345280;
+  --accent-disabled: #c8d6e5;
+  --accent-text: #ffffff;
+
+  --link: #4a6fa5;
+  --link-hover: #345280;
+  --link-active: #2a4570;
+  --link-disabled: #c8d6e5;
+
+  --btn-primary-bg: #4a6fa5;
+  --btn-primary-hover: #3d5f8f;
+  --btn-primary-active: #345280;
+  --btn-primary-text: #ffffff;
+
+  --btn-secondary-bg: transparent;
+  --btn-secondary-border: #d4cfc6;
+  --btn-secondary-hover-border: #b8b0a2;
+  --btn-secondary-hover-bg: #f5f1ea;
+  --btn-secondary-active-bg: #ece7dd;
+  --btn-secondary-text: #3a3a4e;
+
+  --danger: #dc2626;
+  --danger-hover: #b91c1c;
+  --danger-active: #991b1b;
+  --danger-surface: #fef2f2;
+  --danger-text: #991b1b;
+  --danger-border: #fecaca;
+
+  --success: #16a34a;
+  --success-surface: #f0fdf4;
+  --success-text: #166534;
+
+  --warning: #ca8a04;
+  --warning-surface: #fefce8;
+  --warning-text: #854d0e;
+
+  --info: #2563eb;
+  --info-surface: #eff6ff;
+  --info-text: #1e40af;
+
+  --sidebar-bg: #f5f1ea;
+  --sidebar-active-bg: #e8e2d8;
+  --sidebar-active-text: #1a1a2e;
+
+  --badge-bg: #e8e2d8;
+  --badge-text: #5a5a6e;
+
+  --code-bg: #f0ece4;
+
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  color-scheme: light;
+}
+
+/* ── Base Styles ── */
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: "Share Tech Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 13px;
+  letter-spacing: -0.01em;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Utility Classes ── */
+
+.btn-primary {
+  background-color: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  transition: all 150ms ease;
+}
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--btn-primary-hover);
+}
+.btn-primary:active:not(:disabled) {
+  background-color: var(--btn-primary-active);
+  transform: scale(0.98);
+}
+.btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  background-color: var(--btn-secondary-bg);
+  border: 1px solid var(--btn-secondary-border);
+  color: var(--btn-secondary-text);
+  transition: all 150ms ease;
+}
+.btn-secondary:hover:not(:disabled) {
+  border-color: var(--btn-secondary-hover-border);
+  background-color: var(--btn-secondary-hover-bg);
+}
+.btn-secondary:active:not(:disabled) {
+  background-color: var(--btn-secondary-active-bg);
+  transform: scale(0.98);
+}
+.btn-secondary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-danger {
+  background-color: var(--danger);
+  color: white;
+  transition: all 150ms ease;
+}
+.btn-danger:hover:not(:disabled) {
+  background-color: var(--danger-hover);
+}
+.btn-danger:active:not(:disabled) {
+  background-color: var(--danger-active);
+  transform: scale(0.98);
+}
+.btn-danger:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.link {
+  color: var(--link);
+  transition: color 150ms ease;
+}
+.link:hover {
+  color: var(--link-hover);
+}
+.link:active {
+  color: var(--link-active);
+}
+.link[aria-disabled="true"],
+.link:disabled {
+  color: var(--link-disabled);
+  pointer-events: none;
+}
+
+.surface {
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border);
+}
+
+.input-field {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border);
+  color: var(--text-primary);
+  transition: border-color 150ms ease;
+}
+.input-field::placeholder {
+  color: var(--text-tertiary);
+}
+.input-field:focus {
+  border-color: var(--border-focus);
+  outline: none;
+}
+
+.badge {
+  background-color: var(--badge-bg);
+  color: var(--badge-text);
+}
+
+.sidebar-link {
+  color: var(--text-secondary);
+  transition: all 150ms ease;
+}
+.sidebar-link:hover {
+  background-color: var(--bg-surface);
+  color: var(--text-primary);
+}
+.sidebar-link.active {
+  background-color: var(--sidebar-active-bg);
+  color: var(--sidebar-active-text);
+}
+
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-tertiary { color: var(--text-tertiary); }
+
+/* ── Animations ── */
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ── Timeline ── */
+
+.timeline-phase {
+  position: relative;
+  padding-left: 2.5rem;
+}
+.timeline-phase::before {
+  content: "";
+  position: absolute;
+  left: 0.6875rem;
+  top: 2rem;
+  bottom: -2rem;
+  width: 1px;
+  background-color: var(--border);
+}
+.timeline-phase:last-child::before {
+  display: none;
+}
+.timeline-dot {
+  position: absolute;
+  left: 0;
+  top: 0.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 9999px;
+  border: 1px solid var(--border);
+  background-color: var(--bg-surface);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-tertiary);
+}
+
+/* ── Accordion ── */
+
+.accordion-content {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: max-height 300ms ease, opacity 200ms ease;
+}
+.accordion-content.open {
+  max-height: 600px;
+  opacity: 1;
+}
+
+/* ── Tab active ── */
+
+.tab-btn {
+  padding: 0.375rem 0.75rem;
+  border-radius: 4px;
+  font-size: 11px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--text-tertiary);
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+.tab-btn:hover {
+  border-color: var(--border-hover);
+  color: var(--text-secondary);
+}
+.tab-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background-color: var(--bg-surface);
+}

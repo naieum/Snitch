@@ -1,0 +1,20 @@
+name: Skill Quality
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  skill-quality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify mirrored skill trees
+        run: ./scripts/ci/verify_skill_mirror.sh
+
+      - name: Verify validation signal contract
+        run: ./scripts/ci/verify_validation_contract.sh

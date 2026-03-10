@@ -1,0 +1,52 @@
+{
+  "id": "api-auth-risk",
+  "scan_mode": "quick",
+  "selected_categories": [4, 12, 28, 39],
+  "scan_mode_detected_features": ["next-auth", "express", "github-actions"],
+  "recheck_candidates": ["src/auth/login.ts:42", ".github/workflows/ci.yml:18"],
+  "findings": [],
+  "validation_signals": [
+    {
+      "check_id": "VS-001",
+      "status": "warn",
+      "category_links": [4, 39],
+      "evidence": [
+        {
+          "location": "src/auth/login.ts:42",
+          "excerpt": "issueSessionToken(user)"
+        }
+      ],
+      "impact": "Security-sensitive path lacks reproducibility hooks for reliable verification.",
+      "recommended_action": "Add deterministic replay or targeted regression test for login/session checks.",
+      "confidence": "high"
+    },
+    {
+      "check_id": "VS-002",
+      "status": "warn",
+      "category_links": [4, 28, 39],
+      "evidence": [
+        {
+          "location": "tests/auth/login.test.ts:11",
+          "excerpt": "describe(\"login\", ...)"
+        }
+      ],
+      "impact": "Positive tests exist but adversarial cases are missing.",
+      "recommended_action": "Add invalid token, stale session, and ownership boundary negative tests.",
+      "confidence": "medium"
+    },
+    {
+      "check_id": "VS-003",
+      "status": "fail",
+      "category_links": [31],
+      "evidence": [
+        {
+          "location": ".github/workflows/ci.yml:18",
+          "excerpt": "run: npm test"
+        }
+      ],
+      "impact": "CI does not re-run security checks after auth-sensitive changes.",
+      "recommended_action": "Run targeted security scan and test suite in CI for auth route changes.",
+      "confidence": "high"
+    }
+  ]
+}

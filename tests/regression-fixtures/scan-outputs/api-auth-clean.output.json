@@ -1,0 +1,52 @@
+{
+  "id": "api-auth-clean",
+  "scan_mode": "quick",
+  "selected_categories": [4, 12, 21, 28, 39],
+  "scan_mode_detected_features": ["next-auth", "vitest", "github-actions", "opentelemetry"],
+  "recheck_candidates": [],
+  "findings": [],
+  "validation_signals": [
+    {
+      "check_id": "VS-001",
+      "status": "pass",
+      "category_links": [4, 39],
+      "evidence": [
+        {
+          "location": "tests/security/session-regression.test.ts:9",
+          "excerpt": "it(\"invalidates stale sessions\", ...)"
+        }
+      ],
+      "impact": "Reproducibility coverage is present for sensitive auth/session flows.",
+      "recommended_action": "Keep replay fixtures updated with schema and auth changes.",
+      "confidence": "high"
+    },
+    {
+      "check_id": "VS-005",
+      "status": "pass",
+      "category_links": [12, 21],
+      "evidence": [
+        {
+          "location": "src/observability/audit.ts:27",
+          "excerpt": "auditLog({ action: \"role.change\" })"
+        }
+      ],
+      "impact": "Critical user and permission changes are traceable.",
+      "recommended_action": "Ensure new privileged routes continue to use audit hooks.",
+      "confidence": "high"
+    },
+    {
+      "check_id": "VS-006",
+      "status": "pass",
+      "category_links": [4, 39],
+      "evidence": [
+        {
+          "location": "src/auth/session.ts:63",
+          "excerpt": "maxSessionAgeMs = 3600000"
+        }
+      ],
+      "impact": "Runtime guardrails reduce abuse and blast radius.",
+      "recommended_action": "Review thresholds quarterly to keep guardrails effective.",
+      "confidence": "medium"
+    }
+  ]
+}
